@@ -1,7 +1,7 @@
-package nanovgo
+package davinci
 
 import (
-	"github.com/shibukawa/nanovgo/fontstashmini"
+	"github.com/jxo/davinci/fontstashmini"
 )
 
 type nvgParams interface {

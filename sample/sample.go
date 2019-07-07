@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/goxjs/gl"
 	"github.com/goxjs/glfw"
-	"github.com/shibukawa/nanovgo"
-	"github.com/shibukawa/nanovgo/perfgraph"
-	"github.com/shibukawa/nanovgo/sample/demo"
+	"github.com/jxo/davinci"
+	"github.com/jxo/davinci/perfgraph"
+	"github.com/jxo/davinci/sample/demo"
 	"log"
 )
 
@@ -42,7 +42,7 @@ func main() {
 	window.SetKeyCallback(key)
 	window.MakeContextCurrent()
 
-	ctx, err := nanovgo.NewContext(0 /*nanovgo.AntiAlias | nanovgo.StencilStrokes | nanovgo.Debug*/)
+	ctx, err := davinci.NewContext(0 /*davinci.AntiAlias | davinci.StencilStrokes | davinci.Debug*/)
 	defer ctx.Delete()
 
 	if err != nil {
@@ -90,7 +90,7 @@ func main() {
 	demoData.FreeData(ctx)
 }
 
-func LoadDemo(ctx *nanovgo.Context) *demo.DemoData {
+func LoadDemo(ctx *davinci.Context) *demo.DemoData {
 	d := &demo.DemoData{}
 	for i := 0; i < 12; i++ {
 		path := fmt.Sprintf("images/image%d.jpg", i+1)

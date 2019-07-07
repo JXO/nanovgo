@@ -1,4 +1,4 @@
-package nanovgo
+package davinci
 
 // CreateFlags is used when NewContext() to create NanoVGo context.
 type CreateFlags int

@@ -1,6 +1,6 @@
 // +build js
 
-package nanovgo
+package davinci
 
 import (
 	"encoding/binary"

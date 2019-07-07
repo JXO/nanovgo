@@ -1,7 +1,7 @@
 package demo
 
 import (
-	"github.com/shibukawa/nanovgo"
+	"github.com/jxo/davinci"
 	"math"
 	"strconv"
 )
@@ -21,13 +21,13 @@ type DemoData struct {
 	Images                          []int
 }
 
-func (d *DemoData) FreeData(ctx *nanovgo.Context) {
+func (d *DemoData) FreeData(ctx *davinci.Context) {
 	for _, img := range d.Images {
 		ctx.DeleteImage(img)
 	}
 }
 
-func RenderDemo(ctx *nanovgo.Context, mx, my, width, height, t float32, blowup bool, data *DemoData) {
+func RenderDemo(ctx *davinci.Context, mx, my, width, height, t float32, blowup bool, data *DemoData) {
 	drawEyes(ctx, width-250, 50, 150, 100, mx, my, t)
 	drawParagraph(ctx, width-450, 50, 150, 100, mx, my)
 	drawGraph(ctx, 0, height/2, width, height/2, t)
@@ -48,7 +48,7 @@ func RenderDemo(ctx *nanovgo.Context, mx, my, width, height, t float32, blowup b
 	defer ctx.Restore()
 
 	if blowup {
-		ctx.Rotate(sinF(t*0.3) * 5.0 / 180.0 * nanovgo.PI)
+		ctx.Rotate(sinF(t*0.3) * 5.0 / 180.0 * davinci.PI)
 		ctx.Scale(2.0, 2.0)
 	}
 
@@ -70,7 +70,7 @@ func RenderDemo(ctx *nanovgo.Context, mx, my, width, height, t float32, blowup b
 	drawEditBox(ctx, "Password", x, y, 280, 28)
 	y += 38
 	drawCheckBox(ctx, "Remember me", x, y, 140, 28)
-	drawButton(ctx, IconLOGIN, "Sign in", x+138, y, 140, 28, nanovgo.RGBA(0, 96, 128, 255))
+	drawButton(ctx, IconLOGIN, "Sign in", x+138, y, 140, 28, davinci.RGBA(0, 96, 128, 255))
 	y += 45
 
 	// Slider
@@ -80,8 +80,8 @@ func RenderDemo(ctx *nanovgo.Context, mx, my, width, height, t float32, blowup b
 	drawSlider(ctx, 0.4, x, y, 170, 28)
 	y += 55
 
-	drawButton(ctx, IconTRASH, "Delete", x, y, 160, 28, nanovgo.RGBA(128, 16, 8, 255))
-	drawButton(ctx, 0, "Cancel", x+170, y, 110, 28, nanovgo.RGBA(0, 0, 0, 0))
+	drawButton(ctx, IconTRASH, "Delete", x, y, 160, 28, davinci.RGBA(128, 16, 8, 255))
+	drawButton(ctx, 0, "Cancel", x+170, y, 110, 28, davinci.RGBA(0, 0, 0, 0))
 
 	// Thumbnails box
 	drawThumbnails(ctx, 365, popy-30, 160, 300, data.Images, t)
@@ -118,7 +118,7 @@ func maxF(a, b float32) float32 {
 	return b
 }
 
-func isBlack(col nanovgo.Color) bool {
+func isBlack(col davinci.Color) bool {
 	return col.R == 0.0 && col.G == 0.0 && col.B == 0.0 && col.A == 0.0
 }
 
@@ -126,7 +126,7 @@ func cpToUTF8(cp int) string {
 	return string([]rune{rune(cp)})
 }
 
-func drawWindow(ctx *nanovgo.Context, title string, x, y, w, h float32) {
+func drawWindow(ctx *davinci.Context, title string, x, y, w, h float32) {
 	var cornerRadius float32 = 3.0
 
 	ctx.Save()
@@ -136,21 +136,21 @@ func drawWindow(ctx *nanovgo.Context, title string, x, y, w, h float32) {
 	// Window
 	ctx.BeginPath()
 	ctx.RoundedRect(x, y, w, h, cornerRadius)
-	ctx.SetFillColor(nanovgo.RGBA(28, 30, 34, 192))
-	//      ctx.FillColor(nanovgo.RGBA(0,0,0,128));
+	ctx.SetFillColor(davinci.RGBA(28, 30, 34, 192))
+	//      ctx.FillColor(davinci.RGBA(0,0,0,128));
 	ctx.Fill()
 
 	// Drop shadow
-	shadowPaint := nanovgo.BoxGradient(x, y+2, w, h, cornerRadius*2, 10, nanovgo.RGBA(0, 0, 0, 128), nanovgo.RGBA(0, 0, 0, 0))
+	shadowPaint := davinci.BoxGradient(x, y+2, w, h, cornerRadius*2, 10, davinci.RGBA(0, 0, 0, 128), davinci.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(x-10, y-10, w+20, h+30)
 	ctx.RoundedRect(x, y, w, h, cornerRadius)
-	ctx.PathWinding(nanovgo.Hole)
+	ctx.PathWinding(davinci.Hole)
 	ctx.SetFillPaint(shadowPaint)
 	ctx.Fill()
 
 	// Header
-	headerPaint := nanovgo.LinearGradient(x, y, x, y+15, nanovgo.RGBA(255, 255, 255, 8), nanovgo.RGBA(0, 0, 0, 16))
+	headerPaint := davinci.LinearGradient(x, y, x, y+15, davinci.RGBA(255, 255, 255, 8), davinci.RGBA(0, 0, 0, 16))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+1, w-2, 30, cornerRadius-1)
 	ctx.SetFillPaint(headerPaint)
@@ -158,27 +158,27 @@ func drawWindow(ctx *nanovgo.Context, title string, x, y, w, h float32) {
 	ctx.BeginPath()
 	ctx.MoveTo(x+0.5, y+0.5+30)
 	ctx.LineTo(x+0.5+w-1, y+0.5+30)
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 32))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 32))
 	ctx.Stroke()
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans-bold")
-	ctx.SetTextAlign(nanovgo.AlignCenter | nanovgo.AlignMiddle)
+	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
 
 	ctx.SetFontBlur(2)
-	ctx.SetFillColor(nanovgo.RGBA(0, 0, 0, 128))
+	ctx.SetFillColor(davinci.RGBA(0, 0, 0, 128))
 	ctx.Text(x+w/2, y+16+1, title)
 
 	ctx.SetFontBlur(0)
-	ctx.SetFillColor(nanovgo.RGBA(220, 220, 220, 160))
+	ctx.SetFillColor(davinci.RGBA(220, 220, 220, 160))
 	ctx.Text(x+w/2, y+16, title)
 }
 
-func drawSearchBox(ctx *nanovgo.Context, text string, x, y, w, h float32) {
+func drawSearchBox(ctx *davinci.Context, text string, x, y, w, h float32) {
 	cornerRadius := h/2 - 1
 
 	// Edit
-	bg := nanovgo.BoxGradient(x, y+1.5, w, h, h/2, 5, nanovgo.RGBA(0, 0, 0, 16), nanovgo.RGBA(0, 0, 0, 92))
+	bg := davinci.BoxGradient(x, y+1.5, w, h, h/2, 5, davinci.RGBA(0, 0, 0, 16), davinci.RGBA(0, 0, 0, 92))
 	ctx.BeginPath()
 	ctx.RoundedRect(x, y, w, h, cornerRadius)
 	ctx.SetFillPaint(bg)
@@ -191,29 +191,29 @@ func drawSearchBox(ctx *nanovgo.Context, text string, x, y, w, h float32) {
 
 	ctx.SetFontSize(h * 1.3)
 	ctx.SetFontFace("icons")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 64))
-	ctx.SetTextAlign(nanovgo.AlignCenter | nanovgo.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 64))
+	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
 	ctx.Text(x+h*0.55, y+h*0.55, cpToUTF8(IconSEARCH))
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 32))
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 32))
 
-	ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignMiddle)
+	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
 	ctx.Text(x+h*1.05, y+h*0.5, text)
 
 	ctx.SetFontSize(h * 1.3)
 	ctx.SetFontFace("icons")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 32))
-	ctx.SetTextAlign(nanovgo.AlignCenter | nanovgo.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 32))
+	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
 	ctx.Text(x+w-h*0.55, y+h*0.55, cpToUTF8(IconCIRCLEDCROSS))
 }
 
-func drawDropDown(ctx *nanovgo.Context, text string, x, y, w, h float32) {
+func drawDropDown(ctx *davinci.Context, text string, x, y, w, h float32) {
 
 	var cornerRadius float32 = 4.0
 
-	bg := nanovgo.LinearGradient(x, y, x, y+h, nanovgo.RGBA(255, 255, 255, 16), nanovgo.RGBA(0, 0, 0, 16))
+	bg := davinci.LinearGradient(x, y, x, y+h, davinci.RGBA(255, 255, 255, 16), davinci.RGBA(0, 0, 0, 16))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+1, w-2, h-2, cornerRadius-1)
 	ctx.SetFillPaint(bg)
@@ -221,25 +221,25 @@ func drawDropDown(ctx *nanovgo.Context, text string, x, y, w, h float32) {
 
 	ctx.BeginPath()
 	ctx.RoundedRect(x+0.5, y+0.5, w-1, h-1, cornerRadius-0.5)
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 48))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 48))
 	ctx.Stroke()
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 160))
-	ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 160))
+	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
 	ctx.Text(x+h*0.3, y+h*0.5, text)
 
 	ctx.SetFontSize(h * 1.3)
 	ctx.SetFontFace("icons")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 64))
-	ctx.SetTextAlign(nanovgo.AlignCenter | nanovgo.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 64))
+	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
 	ctx.Text(x+w-h*0.5, y+h*0.5, cpToUTF8(IconCHEVRONRIGHT))
 }
 
-func drawEditBoxBase(ctx *nanovgo.Context, x, y, w, h float32) {
+func drawEditBoxBase(ctx *davinci.Context, x, y, w, h float32) {
 	// Edit
-	bg := nanovgo.BoxGradient(x+1, y+1+1.5, w-2, h-2, 3, 4, nanovgo.RGBA(255, 255, 255, 32), nanovgo.RGBA(32, 32, 32, 32))
+	bg := davinci.BoxGradient(x+1, y+1+1.5, w-2, h-2, 3, 4, davinci.RGBA(255, 255, 255, 32), davinci.RGBA(32, 32, 32, 32))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+1, w-2, h-2, 4-1)
 	ctx.SetFillPaint(bg)
@@ -247,59 +247,59 @@ func drawEditBoxBase(ctx *nanovgo.Context, x, y, w, h float32) {
 
 	ctx.BeginPath()
 	ctx.RoundedRect(x+0.5, y+0.5, w-1, h-1, 4-0.5)
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 48))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 48))
 	ctx.Stroke()
 }
 
-func drawEditBox(ctx *nanovgo.Context, text string, x, y, w, h float32) {
+func drawEditBox(ctx *davinci.Context, text string, x, y, w, h float32) {
 
 	drawEditBoxBase(ctx, x, y, w, h)
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 64))
-	ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 64))
+	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
 	ctx.Text(x+h*0.3, y+h*0.5, text)
 }
 
-func drawLabel(ctx *nanovgo.Context, text string, x, y, w, h float32) {
+func drawLabel(ctx *davinci.Context, text string, x, y, w, h float32) {
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 128))
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 128))
 
-	ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignMiddle)
+	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
 	ctx.Text(x, y+h*0.5, text)
 }
 
-func drawEditBoxNum(ctx *nanovgo.Context, text, units string, x, y, w, h float32) {
+func drawEditBoxNum(ctx *davinci.Context, text, units string, x, y, w, h float32) {
 	drawEditBoxBase(ctx, x, y, w, h)
 
 	uw, _ := ctx.TextBounds(0, 0, units)
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 64))
-	ctx.SetTextAlign(nanovgo.AlignRight | nanovgo.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 64))
+	ctx.SetTextAlign(davinci.AlignRight | davinci.AlignMiddle)
 	ctx.Text(x+w-h*0.3, y+h*0.5, units)
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 128))
-	ctx.SetTextAlign(nanovgo.AlignRight | nanovgo.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 128))
+	ctx.SetTextAlign(davinci.AlignRight | davinci.AlignMiddle)
 	ctx.Text(x+w-uw-h*0.5, y+h*0.5, text)
 }
 
-func drawCheckBox(ctx *nanovgo.Context, text string, x, y, w, h float32) {
+func drawCheckBox(ctx *davinci.Context, text string, x, y, w, h float32) {
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 160))
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 160))
 
-	ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignMiddle)
+	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
 	ctx.Text(x+28, y+h*0.5, text)
 
-	bg := nanovgo.BoxGradient(x+1, y+float32(int(h*0.5))-9+1, 18, 18, 3, 3, nanovgo.RGBA(0, 0, 0, 32), nanovgo.RGBA(0, 0, 0, 92))
+	bg := davinci.BoxGradient(x+1, y+float32(int(h*0.5))-9+1, 18, 18, 3, 3, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 92))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+float32(int(h*0.5))-9, 18, 18, 3)
 	ctx.SetFillPaint(bg)
@@ -307,12 +307,12 @@ func drawCheckBox(ctx *nanovgo.Context, text string, x, y, w, h float32) {
 
 	ctx.SetFontSize(40)
 	ctx.SetFontFace("icons")
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 128))
-	ctx.SetTextAlign(nanovgo.AlignCenter | nanovgo.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 128))
+	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
 	ctx.Text(x+9+2, y+h*0.5, cpToUTF8(IconCHECK))
 }
 
-func drawButton(ctx *nanovgo.Context, preicon int, text string, x, y, w, h float32, col nanovgo.Color) {
+func drawButton(ctx *davinci.Context, preicon int, text string, x, y, w, h float32, col davinci.Color) {
 	var cornerRadius float32 = 4.0
 	var iw float32
 
@@ -322,7 +322,7 @@ func drawButton(ctx *nanovgo.Context, preicon int, text string, x, y, w, h float
 	} else {
 		alpha = 32
 	}
-	bg := nanovgo.LinearGradient(x, y, x, y+h, nanovgo.RGBA(255, 255, 255, alpha), nanovgo.RGBA(0, 0, 0, alpha))
+	bg := davinci.LinearGradient(x, y, x, y+h, davinci.RGBA(255, 255, 255, alpha), davinci.RGBA(0, 0, 0, alpha))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+1, w-2, h-2, cornerRadius-1)
 	if !isBlack(col) {
@@ -334,7 +334,7 @@ func drawButton(ctx *nanovgo.Context, preicon int, text string, x, y, w, h float
 
 	ctx.BeginPath()
 	ctx.RoundedRect(x+0.5, y+0.5, w-1, h-1, cornerRadius-0.5)
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 48))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 48))
 	ctx.Stroke()
 
 	ctx.SetFontSize(20.0)
@@ -346,21 +346,21 @@ func drawButton(ctx *nanovgo.Context, preicon int, text string, x, y, w, h float
 		iw, _ = ctx.TextBounds(0, 0, cpToUTF8(preicon))
 		iw += h * 0.15
 
-		ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 96))
-		ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignMiddle)
+		ctx.SetFillColor(davinci.RGBA(255, 255, 255, 96))
+		ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
 		ctx.Text(x+w*0.5-tw*0.5-iw*0.75, y+h*0.5, cpToUTF8(preicon))
 	}
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans-bold")
-	ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignMiddle)
-	ctx.SetFillColor(nanovgo.RGBA(0, 0, 0, 160))
+	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
+	ctx.SetFillColor(davinci.RGBA(0, 0, 0, 160))
 	ctx.Text(x+w*0.5-tw*0.5+iw*0.25, y+h*0.5-1, text)
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 160))
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 160))
 	ctx.Text(x+w*0.5-tw*0.5+iw*0.25, y+h*0.5, text)
 }
 
-func drawSlider(ctx *nanovgo.Context, pos, x, y, w, h float32) {
+func drawSlider(ctx *davinci.Context, pos, x, y, w, h float32) {
 	cy := y + float32(int(h*0.5))
 	kr := float32(int(h * 0.25))
 
@@ -369,37 +369,37 @@ func drawSlider(ctx *nanovgo.Context, pos, x, y, w, h float32) {
 	//      ctx.ClearState(vg);
 
 	// Slot
-	bg := nanovgo.BoxGradient(x, cy-2+1, w, 4, 2, 2, nanovgo.RGBA(0, 0, 0, 32), nanovgo.RGBA(0, 0, 0, 128))
+	bg := davinci.BoxGradient(x, cy-2+1, w, 4, 2, 2, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 128))
 	ctx.BeginPath()
 	ctx.RoundedRect(x, cy-2, w, 4, 2)
 	ctx.SetFillPaint(bg)
 	ctx.Fill()
 
 	// Knob Shadow
-	bg = nanovgo.RadialGradient(x+float32(int(pos*w)), cy+1, kr-3, kr+3, nanovgo.RGBA(0, 0, 0, 64), nanovgo.RGBA(0, 0, 0, 0))
+	bg = davinci.RadialGradient(x+float32(int(pos*w)), cy+1, kr-3, kr+3, davinci.RGBA(0, 0, 0, 64), davinci.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(x+float32(int(pos*w))-kr-5, cy-kr-5, kr*2+5+5, kr*2+5+5+3)
 	ctx.Circle(x+float32(int(pos*w)), cy, kr)
-	ctx.PathWinding(nanovgo.Hole)
+	ctx.PathWinding(davinci.Hole)
 	ctx.SetFillPaint(bg)
 	ctx.Fill()
 
 	// Knob
-	knob := nanovgo.LinearGradient(x, cy-kr, x, cy+kr, nanovgo.RGBA(255, 255, 255, 16), nanovgo.RGBA(0, 0, 0, 16))
+	knob := davinci.LinearGradient(x, cy-kr, x, cy+kr, davinci.RGBA(255, 255, 255, 16), davinci.RGBA(0, 0, 0, 16))
 	ctx.BeginPath()
 	ctx.Circle(x+float32(int(pos*w)), cy, kr-1)
-	ctx.SetFillColor(nanovgo.RGBA(40, 43, 48, 255))
+	ctx.SetFillColor(davinci.RGBA(40, 43, 48, 255))
 	ctx.Fill()
 	ctx.SetFillPaint(knob)
 	ctx.Fill()
 
 	ctx.BeginPath()
 	ctx.Circle(x+float32(int(pos*w)), cy, kr-0.5)
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 92))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 92))
 	ctx.Stroke()
 }
 
-func drawEyes(ctx *nanovgo.Context, x, y, w, h, mx, my, t float32) {
+func drawEyes(ctx *davinci.Context, x, y, w, h, mx, my, t float32) {
 	ex := w * 0.23
 	ey := h * 0.5
 	lx := x + ex
@@ -414,14 +414,14 @@ func drawEyes(ctx *nanovgo.Context, x, y, w, h, mx, my, t float32) {
 	}
 	blink := float32(1.0 - math.Pow(float64(sinF(t*0.5)), 200)*0.8)
 
-	bg1 := nanovgo.LinearGradient(x, y+h*0.5, x+w*0.1, y+h, nanovgo.RGBA(0, 0, 0, 32), nanovgo.RGBA(0, 0, 0, 16))
+	bg1 := davinci.LinearGradient(x, y+h*0.5, x+w*0.1, y+h, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 16))
 	ctx.BeginPath()
 	ctx.Ellipse(lx+3.0, ly+16.0, ex, ey)
 	ctx.Ellipse(rx+3.0, ry+16.0, ex, ey)
 	ctx.SetFillPaint(bg1)
 	ctx.Fill()
 
-	bg2 := nanovgo.LinearGradient(x, y+h*0.25, x+w*0.1, y+h, nanovgo.RGBA(220, 220, 220, 255), nanovgo.RGBA(128, 128, 128, 255))
+	bg2 := davinci.LinearGradient(x, y+h*0.25, x+w*0.1, y+h, davinci.RGBA(220, 220, 220, 255), davinci.RGBA(128, 128, 128, 255))
 	ctx.BeginPath()
 	ctx.Ellipse(lx, ly, ex, ey)
 	ctx.Ellipse(rx, ry, ex, ey)
@@ -439,7 +439,7 @@ func drawEyes(ctx *nanovgo.Context, x, y, w, h, mx, my, t float32) {
 	dy *= ey * 0.5
 	ctx.BeginPath()
 	ctx.Ellipse(lx+dx, ly+dy+ey*0.25*(1.0-blink), br, br*blink)
-	ctx.SetFillColor(nanovgo.RGBA(32, 32, 32, 255))
+	ctx.SetFillColor(davinci.RGBA(32, 32, 32, 255))
 	ctx.Fill()
 
 	dx = (mx - rx) / (ex * 10)
@@ -453,7 +453,7 @@ func drawEyes(ctx *nanovgo.Context, x, y, w, h, mx, my, t float32) {
 	dy *= ey * 0.5
 	ctx.BeginPath()
 	ctx.Ellipse(rx+dx, ry+dy+ey*0.25*(1.0-blink), br, br*blink)
-	ctx.SetFillColor(nanovgo.RGBA(32, 32, 32, 255))
+	ctx.SetFillColor(davinci.RGBA(32, 32, 32, 255))
 	ctx.Fill()
 	dx = (mx - rx) / (ex * 10)
 	dy = (my - ry) / (ey * 10)
@@ -466,23 +466,23 @@ func drawEyes(ctx *nanovgo.Context, x, y, w, h, mx, my, t float32) {
 	dy *= ey * 0.5
 	ctx.BeginPath()
 	ctx.Ellipse(rx+dx, ry+dy+ey*0.25*(1.0-blink), br, br*blink)
-	ctx.SetFillColor(nanovgo.RGBA(32, 32, 32, 255))
+	ctx.SetFillColor(davinci.RGBA(32, 32, 32, 255))
 	ctx.Fill()
 
-	gloss1 := nanovgo.RadialGradient(lx-ex*0.25, ly-ey*0.5, ex*0.1, ex*0.75, nanovgo.RGBA(255, 255, 255, 128), nanovgo.RGBA(255, 255, 255, 0))
+	gloss1 := davinci.RadialGradient(lx-ex*0.25, ly-ey*0.5, ex*0.1, ex*0.75, davinci.RGBA(255, 255, 255, 128), davinci.RGBA(255, 255, 255, 0))
 	ctx.BeginPath()
 	ctx.Ellipse(lx, ly, ex, ey)
 	ctx.SetFillPaint(gloss1)
 	ctx.Fill()
 
-	gloss2 := nanovgo.RadialGradient(rx-ex*0.25, ry-ey*0.5, ex*0.1, ex*0.75, nanovgo.RGBA(255, 255, 255, 128), nanovgo.RGBA(255, 255, 255, 0))
+	gloss2 := davinci.RadialGradient(rx-ex*0.25, ry-ey*0.5, ex*0.1, ex*0.75, davinci.RGBA(255, 255, 255, 128), davinci.RGBA(255, 255, 255, 0))
 	ctx.BeginPath()
 	ctx.Ellipse(rx, ry, ex, ey)
 	ctx.SetFillPaint(gloss2)
 	ctx.Fill()
 }
 
-func drawGraph(ctx *nanovgo.Context, x, y, w, h, t float32) {
+func drawGraph(ctx *davinci.Context, x, y, w, h, t float32) {
 	var sx, sy [6]float32
 	dx := w / 5.0
 
@@ -501,7 +501,7 @@ func drawGraph(ctx *nanovgo.Context, x, y, w, h, t float32) {
 	}
 
 	// Graph background
-	bg := nanovgo.LinearGradient(x, y, x, y+h, nanovgo.RGBA(0, 160, 192, 0), nanovgo.RGBA(0, 160, 192, 64))
+	bg := davinci.LinearGradient(x, y, x, y+h, davinci.RGBA(0, 160, 192, 0), davinci.RGBA(0, 160, 192, 64))
 	ctx.BeginPath()
 	ctx.MoveTo(sx[0], sy[0])
 	for i := 1; i < 6; i++ {
@@ -518,7 +518,7 @@ func drawGraph(ctx *nanovgo.Context, x, y, w, h, t float32) {
 	for i := 1; i < 6; i++ {
 		ctx.BezierTo(sx[i-1]+dx*0.5, sy[i-1]+2, sx[i]-dx*0.5, sy[i]+2, sx[i], sy[i]+2)
 	}
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 32))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 32))
 	ctx.SetStrokeWidth(3.0)
 	ctx.Stroke()
 
@@ -527,13 +527,13 @@ func drawGraph(ctx *nanovgo.Context, x, y, w, h, t float32) {
 	for i := 1; i < 6; i++ {
 		ctx.BezierTo(sx[i-1]+dx*0.5, sy[i-1], sx[i]-dx*0.5, sy[i], sx[i], sy[i])
 	}
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 160, 192, 255))
+	ctx.SetStrokeColor(davinci.RGBA(0, 160, 192, 255))
 	ctx.SetStrokeWidth(3.0)
 	ctx.Stroke()
 
 	// Graph sample pos
 	for i := 0; i < 6; i++ {
-		bg = nanovgo.RadialGradient(sx[i], sy[i]+2, 3.0, 8.0, nanovgo.RGBA(0, 0, 0, 32), nanovgo.RGBA(0, 0, 0, 0))
+		bg = davinci.RadialGradient(sx[i], sy[i]+2, 3.0, 8.0, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 0))
 		ctx.BeginPath()
 		ctx.Rect(sx[i]-10, sy[i]-10+2, 20, 20)
 		ctx.SetFillPaint(bg)
@@ -544,21 +544,21 @@ func drawGraph(ctx *nanovgo.Context, x, y, w, h, t float32) {
 	for i := 0; i < 6; i++ {
 		ctx.Circle(sx[i], sy[i], 4.0)
 	}
-	ctx.SetFillColor(nanovgo.RGBA(0, 160, 192, 255))
+	ctx.SetFillColor(davinci.RGBA(0, 160, 192, 255))
 	ctx.Fill()
 	ctx.BeginPath()
 	for i := 0; i < 6; i++ {
 		ctx.Circle(sx[i], sy[i], 2.0)
 	}
-	ctx.SetFillColor(nanovgo.RGBA(220, 220, 220, 255))
+	ctx.SetFillColor(davinci.RGBA(220, 220, 220, 255))
 	ctx.Fill()
 
 	ctx.SetStrokeWidth(1.0)
 }
 
-func drawSpinner(ctx *nanovgo.Context, cx, cy, r, t float32) {
+func drawSpinner(ctx *davinci.Context, cx, cy, r, t float32) {
 	a0 := 0.0 + t*6
-	a1 := nanovgo.PI + t*6
+	a1 := davinci.PI + t*6
 	r0 := r
 	r1 := r * 0.75
 
@@ -566,19 +566,19 @@ func drawSpinner(ctx *nanovgo.Context, cx, cy, r, t float32) {
 	defer ctx.Restore()
 
 	ctx.BeginPath()
-	ctx.Arc(cx, cy, r0, a0, a1, nanovgo.Clockwise)
-	ctx.Arc(cx, cy, r1, a1, a0, nanovgo.CounterClockwise)
+	ctx.Arc(cx, cy, r0, a0, a1, davinci.Clockwise)
+	ctx.Arc(cx, cy, r1, a1, a0, davinci.CounterClockwise)
 	ctx.ClosePath()
 	ax := cx + cosF(a0)*(r0+r1)*0.5
 	ay := cy + sinF(a0)*(r0+r1)*0.5
 	bx := cx + cosF(a1)*(r0+r1)*0.5
 	by := cy + sinF(a1)*(r0+r1)*0.5
-	paint := nanovgo.LinearGradient(ax, ay, bx, by, nanovgo.RGBA(0, 0, 0, 0), nanovgo.RGBA(0, 0, 0, 128))
+	paint := davinci.LinearGradient(ax, ay, bx, by, davinci.RGBA(0, 0, 0, 0), davinci.RGBA(0, 0, 0, 128))
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
 }
 
-func drawThumbnails(ctx *nanovgo.Context, x, y, w, h float32, images []int, t float32) {
+func drawThumbnails(ctx *davinci.Context, x, y, w, h float32, images []int, t float32) {
 	var cornerRadius float32 = 3.0
 
 	var thumb float32 = 60.0
@@ -591,11 +591,11 @@ func drawThumbnails(ctx *nanovgo.Context, x, y, w, h float32, images []int, t fl
 	defer ctx.Restore()
 
 	// Drop shadow
-	shadowPaint := nanovgo.BoxGradient(x, y+4, w, h, cornerRadius*2, 20, nanovgo.RGBA(0, 0, 0, 128), nanovgo.RGBA(0, 0, 0, 0))
+	shadowPaint := davinci.BoxGradient(x, y+4, w, h, cornerRadius*2, 20, davinci.RGBA(0, 0, 0, 128), davinci.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(x-10, y-10, w+20, h+30)
 	ctx.RoundedRect(x, y, w, h, cornerRadius)
-	ctx.PathWinding(nanovgo.Hole)
+	ctx.PathWinding(davinci.Hole)
 	ctx.SetFillPaint(shadowPaint)
 	ctx.Fill()
 
@@ -605,7 +605,7 @@ func drawThumbnails(ctx *nanovgo.Context, x, y, w, h float32, images []int, t fl
 	ctx.MoveTo(x-10, y+arry)
 	ctx.LineTo(x+1, y+arry-11)
 	ctx.LineTo(x+1, y+arry+11)
-	ctx.SetFillColor(nanovgo.RGBA(200, 200, 200, 255))
+	ctx.SetFillColor(davinci.RGBA(200, 200, 200, 255))
 	ctx.Fill()
 
 	ctx.Block(func() {
@@ -640,43 +640,43 @@ func drawThumbnails(ctx *nanovgo.Context, x, y, w, h float32, images []int, t fl
 				drawSpinner(ctx, tx+thumb/2, ty+thumb/2, thumb*0.25, t)
 			}
 
-			imgPaint := nanovgo.ImagePattern(tx+ix, ty+iy, iw, ih, 0.0/180.0*nanovgo.PI, imageID, a)
+			imgPaint := davinci.ImagePattern(tx+ix, ty+iy, iw, ih, 0.0/180.0*davinci.PI, imageID, a)
 			ctx.BeginPath()
 			ctx.RoundedRect(tx, ty, thumb, thumb, 5)
 			ctx.SetFillPaint(imgPaint)
 			ctx.Fill()
 
-			shadowPaint := nanovgo.BoxGradient(tx-1, ty, thumb+2, thumb+2, 5, 3, nanovgo.RGBA(0, 0, 0, 128), nanovgo.RGBA(0, 0, 0, 0))
+			shadowPaint := davinci.BoxGradient(tx-1, ty, thumb+2, thumb+2, 5, 3, davinci.RGBA(0, 0, 0, 128), davinci.RGBA(0, 0, 0, 0))
 			ctx.BeginPath()
 			ctx.Rect(tx-5, ty-5, thumb+10, thumb+10)
 			ctx.RoundedRect(tx, ty, thumb, thumb, 6)
-			ctx.PathWinding(nanovgo.Hole)
+			ctx.PathWinding(davinci.Hole)
 			ctx.SetFillPaint(shadowPaint)
 			ctx.Fill()
 
 			ctx.BeginPath()
 			ctx.RoundedRect(tx+0.5, ty+0.5, thumb-1, thumb-1, 4-0.5)
 			ctx.SetStrokeWidth(1.0)
-			ctx.SetStrokeColor(nanovgo.RGBA(255, 255, 255, 192))
+			ctx.SetStrokeColor(davinci.RGBA(255, 255, 255, 192))
 			ctx.Stroke()
 		}
 	})
 
 	// Hide fades
-	fadePaint := nanovgo.LinearGradient(x, y, x, y+6, nanovgo.RGBA(200, 200, 200, 255), nanovgo.RGBA(200, 200, 200, 0))
+	fadePaint := davinci.LinearGradient(x, y, x, y+6, davinci.RGBA(200, 200, 200, 255), davinci.RGBA(200, 200, 200, 0))
 	ctx.BeginPath()
 	ctx.Rect(x+4, y, w-8, 6)
 	ctx.SetFillPaint(fadePaint)
 	ctx.Fill()
 
-	fadePaint = nanovgo.LinearGradient(x, y+h, x, y+h-6, nanovgo.RGBA(200, 200, 200, 255), nanovgo.RGBA(200, 200, 200, 0))
+	fadePaint = davinci.LinearGradient(x, y+h, x, y+h-6, davinci.RGBA(200, 200, 200, 255), davinci.RGBA(200, 200, 200, 0))
 	ctx.BeginPath()
 	ctx.Rect(x+4, y+h-6, w-8, 6)
 	ctx.SetFillPaint(fadePaint)
 	ctx.Fill()
 
 	// Scroll bar
-	shadowPaint = nanovgo.BoxGradient(x+w-12+1, y+4+1, 8, h-8, 3, 4, nanovgo.RGBA(0, 0, 0, 32), nanovgo.RGBA(0, 0, 0, 92))
+	shadowPaint = davinci.BoxGradient(x+w-12+1, y+4+1, 8, h-8, 3, 4, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 92))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+w-12, y+4, 8, h-8, 3)
 	ctx.SetFillPaint(shadowPaint)
@@ -684,7 +684,7 @@ func drawThumbnails(ctx *nanovgo.Context, x, y, w, h float32, images []int, t fl
 	ctx.Fill()
 
 	scrollH := (h / stackh) * (h - 8)
-	shadowPaint = nanovgo.BoxGradient(x+w-12-1, y+4+(h-8-scrollH)*u-1, 8, scrollH, 3, 4, nanovgo.RGBA(220, 220, 220, 255), nanovgo.RGBA(128, 128, 128, 255))
+	shadowPaint = davinci.BoxGradient(x+w-12-1, y+4+(h-8-scrollH)*u-1, 8, scrollH, 3, 4, davinci.RGBA(220, 220, 220, 255), davinci.RGBA(128, 128, 128, 255))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+w-12+1, y+4+1+(h-8-scrollH)*u, 8-2, scrollH-2, 2)
 	ctx.SetFillPaint(shadowPaint)
@@ -692,7 +692,7 @@ func drawThumbnails(ctx *nanovgo.Context, x, y, w, h float32, images []int, t fl
 	ctx.Fill()
 }
 
-func drawColorWheel(ctx *nanovgo.Context, x, y, w, h, t float32) {
+func drawColorWheel(ctx *davinci.Context, x, y, w, h, t float32) {
 	var r0, r1, ax, ay, bx, by, aeps, r float32
 	hue := sinF(t * 0.12)
 
@@ -700,7 +700,7 @@ func drawColorWheel(ctx *nanovgo.Context, x, y, w, h, t float32) {
 	defer ctx.Restore()
 	/*      ctx.BeginPath()
 	ctx.Rect(x,y,w,h)
-	ctx.FillColor(nanovgo.RGBA(255,0,0,128))
+	ctx.FillColor(davinci.RGBA(255,0,0,128))
 	ctx.Fill()*/
 
 	cx := x + w*0.5
@@ -714,17 +714,17 @@ func drawColorWheel(ctx *nanovgo.Context, x, y, w, h, t float32) {
 	aeps = 0.5 / r1 // half a pixel arc length in radians (2pi cancels out).
 
 	for i := 0; i < 6; i++ {
-		a0 := float32(i)/6.0*nanovgo.PI*2.0 - aeps
-		a1 := float32(i+1.0)/6.0*nanovgo.PI*2.0 + aeps
+		a0 := float32(i)/6.0*davinci.PI*2.0 - aeps
+		a1 := float32(i+1.0)/6.0*davinci.PI*2.0 + aeps
 		ctx.BeginPath()
-		ctx.Arc(cx, cy, r0, a0, a1, nanovgo.Clockwise)
-		ctx.Arc(cx, cy, r1, a1, a0, nanovgo.CounterClockwise)
+		ctx.Arc(cx, cy, r0, a0, a1, davinci.Clockwise)
+		ctx.Arc(cx, cy, r1, a1, a0, davinci.CounterClockwise)
 		ctx.ClosePath()
 		ax = cx + cosF(a0)*(r0+r1)*0.5
 		ay = cy + sinF(a0)*(r0+r1)*0.5
 		bx = cx + cosF(a1)*(r0+r1)*0.5
 		by = cy + sinF(a1)*(r0+r1)*0.5
-		paint := nanovgo.LinearGradient(ax, ay, bx, by, nanovgo.HSLA(a0/(nanovgo.PI*2), 1.0, 0.55, 255), nanovgo.HSLA(a1/(nanovgo.PI*2), 1.0, 0.55, 255))
+		paint := davinci.LinearGradient(ax, ay, bx, by, davinci.HSLA(a0/(davinci.PI*2), 1.0, 0.55, 255), davinci.HSLA(a1/(davinci.PI*2), 1.0, 0.55, 255))
 		ctx.SetFillPaint(paint)
 		ctx.Fill()
 	}
@@ -732,72 +732,72 @@ func drawColorWheel(ctx *nanovgo.Context, x, y, w, h, t float32) {
 	ctx.BeginPath()
 	ctx.Circle(cx, cy, r0-0.5)
 	ctx.Circle(cx, cy, r1+0.5)
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 64))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 64))
 	ctx.SetStrokeWidth(1.0)
 	ctx.Stroke()
 
 	// Selector
 	ctx.Translate(cx, cy)
-	ctx.Rotate(hue * nanovgo.PI * 2)
+	ctx.Rotate(hue * davinci.PI * 2)
 
 	// Marker on
 	ctx.SetStrokeWidth(2.0)
 	ctx.BeginPath()
 	ctx.Rect(r0-1, -3, r1-r0+2, 6)
-	ctx.SetStrokeColor(nanovgo.RGBA(255, 255, 255, 192))
+	ctx.SetStrokeColor(davinci.RGBA(255, 255, 255, 192))
 	ctx.Stroke()
 
-	paint := nanovgo.BoxGradient(r0-3, -5, r1-r0+6, 10, 2, 4, nanovgo.RGBA(0, 0, 0, 128), nanovgo.RGBA(0, 0, 0, 0))
+	paint := davinci.BoxGradient(r0-3, -5, r1-r0+6, 10, 2, 4, davinci.RGBA(0, 0, 0, 128), davinci.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(r0-2-10, -4-10, r1-r0+4+20, 8+20)
 	ctx.Rect(r0-2, -4, r1-r0+4, 8)
-	ctx.PathWinding(nanovgo.Hole)
+	ctx.PathWinding(davinci.Hole)
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
 
 	// Center triangle
 	r = r0 - 6
-	ax = cosF(120.0/180.0*nanovgo.PI) * r
-	ay = sinF(120.0/180.0*nanovgo.PI) * r
-	bx = cosF(-120.0/180.0*nanovgo.PI) * r
-	by = sinF(-120.0/180.0*nanovgo.PI) * r
+	ax = cosF(120.0/180.0*davinci.PI) * r
+	ay = sinF(120.0/180.0*davinci.PI) * r
+	bx = cosF(-120.0/180.0*davinci.PI) * r
+	by = sinF(-120.0/180.0*davinci.PI) * r
 	ctx.BeginPath()
 	ctx.MoveTo(r, 0)
 	ctx.LineTo(ax, ay)
 	ctx.LineTo(bx, by)
 	ctx.ClosePath()
-	paint = nanovgo.LinearGradient(r, 0, ax, ay, nanovgo.HSLA(hue, 1.0, 0.5, 255), nanovgo.RGBA(255, 255, 255, 255))
+	paint = davinci.LinearGradient(r, 0, ax, ay, davinci.HSLA(hue, 1.0, 0.5, 255), davinci.RGBA(255, 255, 255, 255))
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
-	paint = nanovgo.LinearGradient((r+ax)*0.5, (0+ay)*0.5, bx, by, nanovgo.RGBA(0, 0, 0, 0), nanovgo.RGBA(0, 0, 0, 255))
+	paint = davinci.LinearGradient((r+ax)*0.5, (0+ay)*0.5, bx, by, davinci.RGBA(0, 0, 0, 0), davinci.RGBA(0, 0, 0, 255))
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 64))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 64))
 	ctx.Stroke()
 
 	// Select circle on triangle
-	ax = cosF(120.0/180.0*nanovgo.PI) * r * 0.3
-	ay = sinF(120.0/180.0*nanovgo.PI) * r * 0.4
+	ax = cosF(120.0/180.0*davinci.PI) * r * 0.3
+	ay = sinF(120.0/180.0*davinci.PI) * r * 0.4
 	ctx.SetStrokeWidth(2.0)
 	ctx.BeginPath()
 	ctx.Circle(ax, ay, 5)
-	ctx.SetStrokeColor(nanovgo.RGBA(255, 255, 255, 192))
+	ctx.SetStrokeColor(davinci.RGBA(255, 255, 255, 192))
 	ctx.Stroke()
 
-	paint = nanovgo.RadialGradient(ax, ay, 7, 9, nanovgo.RGBA(0, 0, 0, 64), nanovgo.RGBA(0, 0, 0, 0))
+	paint = davinci.RadialGradient(ax, ay, 7, 9, davinci.RGBA(0, 0, 0, 64), davinci.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(ax-20, ay-20, 40, 40)
 	ctx.Circle(ax, ay, 7)
-	ctx.PathWinding(nanovgo.Hole)
+	ctx.PathWinding(davinci.Hole)
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
 }
 
-func drawLines(ctx *nanovgo.Context, x, y, w, h, t float32) {
+func drawLines(ctx *davinci.Context, x, y, w, h, t float32) {
 	var pad float32 = 5.0
 	s := w/9.0 - pad*2
-	joins := []nanovgo.LineCap{nanovgo.Miter, nanovgo.Round, nanovgo.Bevel}
-	caps := []nanovgo.LineCap{nanovgo.Butt, nanovgo.Round, nanovgo.Square}
+	joins := []davinci.LineCap{davinci.Miter, davinci.Round, davinci.Bevel}
+	caps := []davinci.LineCap{davinci.Butt, davinci.Round, davinci.Square}
 
 	ctx.Save()
 	defer ctx.Restore()
@@ -821,7 +821,7 @@ func drawLines(ctx *nanovgo.Context, x, y, w, h, t float32) {
 			ctx.SetLineJoin(join)
 
 			ctx.SetStrokeWidth(s * 0.3)
-			ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 160))
+			ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 160))
 			ctx.BeginPath()
 			ctx.MoveTo(fx+pts[0], fy+pts[1])
 			ctx.LineTo(fx+pts[2], fy+pts[3])
@@ -829,11 +829,11 @@ func drawLines(ctx *nanovgo.Context, x, y, w, h, t float32) {
 			ctx.LineTo(fx+pts[6], fy+pts[7])
 			ctx.Stroke()
 
-			ctx.SetLineCap(nanovgo.Butt)
-			ctx.SetLineJoin(nanovgo.Bevel)
+			ctx.SetLineCap(davinci.Butt)
+			ctx.SetLineJoin(davinci.Bevel)
 
 			ctx.SetStrokeWidth(1.0)
-			ctx.SetStrokeColor(nanovgo.RGBA(0, 192, 255, 255))
+			ctx.SetStrokeColor(davinci.RGBA(0, 192, 255, 255))
 			ctx.BeginPath()
 			ctx.MoveTo(fx+pts[0], fy+pts[1])
 			ctx.LineTo(fx+pts[2], fy+pts[3])
@@ -845,11 +845,11 @@ func drawLines(ctx *nanovgo.Context, x, y, w, h, t float32) {
 	}
 }
 
-func drawWidths(ctx *nanovgo.Context, x, y, width float32) {
+func drawWidths(ctx *davinci.Context, x, y, width float32) {
 	ctx.Save()
 	defer ctx.Restore()
 
-	ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 255))
+	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 255))
 	for i := 0; i < 20; i++ {
 		w := (float32(i) + 0.5) * 0.1
 		ctx.SetStrokeWidth(w)
@@ -861,8 +861,8 @@ func drawWidths(ctx *nanovgo.Context, x, y, width float32) {
 	}
 }
 
-func drawCaps(ctx *nanovgo.Context, x, y, width float32) {
-	caps := []nanovgo.LineCap{nanovgo.Butt, nanovgo.Round, nanovgo.Square}
+func drawCaps(ctx *davinci.Context, x, y, width float32) {
+	caps := []davinci.LineCap{davinci.Butt, davinci.Round, davinci.Square}
 	var lineWidth float32 = 8.0
 
 	ctx.Save()
@@ -870,19 +870,19 @@ func drawCaps(ctx *nanovgo.Context, x, y, width float32) {
 
 	ctx.BeginPath()
 	ctx.Rect(x-lineWidth/2, y, width+lineWidth, 40)
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 32))
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 32))
 	ctx.Fill()
 
 	ctx.BeginPath()
 	ctx.Rect(x, y, width, 40)
-	ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 32))
+	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 32))
 	ctx.Fill()
 
 	ctx.SetStrokeWidth(lineWidth)
 
 	for i, cap := range caps {
 		ctx.SetLineCap(cap)
-		ctx.SetStrokeColor(nanovgo.RGBA(0, 0, 0, 255))
+		ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 255))
 		ctx.BeginPath()
 		ctx.MoveTo(x, y+float32(i)*10+5)
 		ctx.LineTo(x+width, y+float32(i)*10+5)
@@ -890,7 +890,7 @@ func drawCaps(ctx *nanovgo.Context, x, y, width float32) {
 	}
 }
 
-func drawParagraph(ctx *nanovgo.Context, x, y, width, height, mx, my float32) {
+func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
 	text := "This is longer chunk of text.\n  \n  Would have used lorem ipsum but she    was busy jumping over the lazy dog with the fox and all the men who came to the aid of the party."
 
 	ctx.Save()
@@ -898,7 +898,7 @@ func drawParagraph(ctx *nanovgo.Context, x, y, width, height, mx, my float32) {
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans")
-	ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignTop)
+	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignTop)
 	_, _, lineh := ctx.TextMetrics()
 	// The text break API can be used to fill a large buffer of rows,
 	// or to iterate over the text just few lines (or just one) at a time.
@@ -919,11 +919,11 @@ func drawParagraph(ctx *nanovgo.Context, x, y, width, height, mx, my float32) {
 		} else {
 			alpha = 16
 		}
-		ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, alpha))
+		ctx.SetFillColor(davinci.RGBA(255, 255, 255, alpha))
 		ctx.Rect(x, y, row.Width, lineh)
 		ctx.Fill()
 
-		ctx.SetFillColor(nanovgo.RGBA(255, 255, 255, 255))
+		ctx.SetFillColor(davinci.RGBA(255, 255, 255, 255))
 		ctx.TextRune(x, y, runes[row.StartIndex:row.EndIndex])
 
 		if hit {
@@ -951,7 +951,7 @@ func drawParagraph(ctx *nanovgo.Context, x, y, width, height, mx, my float32) {
 				px = gx
 			}
 			ctx.BeginPath()
-			ctx.SetFillColor(nanovgo.RGBA(255, 192, 0, 255))
+			ctx.SetFillColor(davinci.RGBA(255, 192, 0, 255))
 			ctx.Rect(caretX, y, 1, lineh)
 			ctx.Fill()
 
@@ -967,12 +967,12 @@ func drawParagraph(ctx *nanovgo.Context, x, y, width, height, mx, my float32) {
 		txt := strconv.Itoa(gutter)
 
 		ctx.SetFontSize(13.0)
-		ctx.SetTextAlign(nanovgo.AlignRight | nanovgo.AlignMiddle)
+		ctx.SetTextAlign(davinci.AlignRight | davinci.AlignMiddle)
 
 		_, bounds := ctx.TextBounds(gx, gy, txt)
 
 		ctx.BeginPath()
-		ctx.SetFillColor(nanovgo.RGBA(255, 192, 0, 255))
+		ctx.SetFillColor(davinci.RGBA(255, 192, 0, 255))
 		ctx.RoundedRect(
 			float32(int(bounds[0]-4)),
 			float32(int(bounds[1]-2)),
@@ -981,14 +981,14 @@ func drawParagraph(ctx *nanovgo.Context, x, y, width, height, mx, my float32) {
 			float32(int(bounds[3]-bounds[1])+4)/2.0-1.0)
 		ctx.Fill()
 
-		ctx.SetFillColor(nanovgo.RGBA(32, 32, 32, 255))
+		ctx.SetFillColor(davinci.RGBA(32, 32, 32, 255))
 		ctx.Text(gx, gy, txt)
 	}
 
 	y += 20.0
 
 	ctx.SetFontSize(13.0)
-	ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignTop)
+	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignTop)
 	ctx.SetTextLineHeight(1.2)
 
 	bounds := ctx.TextBoxBounds(x, y, 150, "Hover your mouse over the text to see calculated caret position.")
@@ -1001,7 +1001,7 @@ func drawParagraph(ctx *nanovgo.Context, x, y, width, height, mx, my float32) {
 	ctx.SetGlobalAlpha(a)
 
 	ctx.BeginPath()
-	ctx.SetFillColor(nanovgo.RGBA(220, 220, 220, 255))
+	ctx.SetFillColor(davinci.RGBA(220, 220, 220, 255))
 	ctx.RoundedRect(bounds[0]-2, bounds[1]-2, float32(int(bounds[2]-bounds[0])+4), float32(int(bounds[3]-bounds[1])+4), 3)
 	px := float32(int((bounds[2] + bounds[0]) / 2))
 	ctx.MoveTo(px, bounds[1]-10)
@@ -1009,19 +1009,19 @@ func drawParagraph(ctx *nanovgo.Context, x, y, width, height, mx, my float32) {
 	ctx.LineTo(px-7, bounds[1]+1)
 	ctx.Fill()
 
-	ctx.SetFillColor(nanovgo.RGBA(0, 0, 0, 220))
+	ctx.SetFillColor(davinci.RGBA(0, 0, 0, 220))
 	ctx.TextBox(x, y, 150, "Hover your mouse over the text to see calculated caret position.")
 }
 
-func drawScissor(ctx *nanovgo.Context, x, y, t float32) {
+func drawScissor(ctx *davinci.Context, x, y, t float32) {
 	ctx.Save()
 
 	// Draw first rect and set scissor to it's area.
 	ctx.Translate(x, y)
-	ctx.Rotate(nanovgo.DegToRad(5))
+	ctx.Rotate(davinci.DegToRad(5))
 	ctx.BeginPath()
 	ctx.Rect(-20, -20, 60, 40)
-	ctx.SetFillColor(nanovgo.RGBA(255, 0, 0, 255))
+	ctx.SetFillColor(davinci.RGBA(255, 0, 0, 255))
 	ctx.Fill()
 	ctx.Scissor(-20, -20, 60, 40)
 
@@ -1034,7 +1034,7 @@ func drawScissor(ctx *nanovgo.Context, x, y, t float32) {
 	ctx.ResetScissor()
 	ctx.BeginPath()
 	ctx.Rect(-20, -10, 60, 30)
-	ctx.SetFillColor(nanovgo.RGBA(255, 128, 0, 64))
+	ctx.SetFillColor(davinci.RGBA(255, 128, 0, 64))
 	ctx.Fill()
 	ctx.Restore()
 
@@ -1042,7 +1042,7 @@ func drawScissor(ctx *nanovgo.Context, x, y, t float32) {
 	ctx.IntersectScissor(-20, -10, 60, 30)
 	ctx.BeginPath()
 	ctx.Rect(-20, -10, 60, 30)
-	ctx.SetFillColor(nanovgo.RGBA(255, 128, 0, 255))
+	ctx.SetFillColor(davinci.RGBA(255, 128, 0, 255))
 	ctx.Fill()
 
 	ctx.Restore()

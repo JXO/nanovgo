@@ -1,7 +1,7 @@
 // +build !arm !arm64
 // +build !js
 
-package nanovgo
+package davinci
 
 import (
 	"log"

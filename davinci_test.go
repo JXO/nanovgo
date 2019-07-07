@@ -1,4 +1,4 @@
-package nanovgo
+package davinci
 
 import (
 	"testing"

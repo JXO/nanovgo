@@ -2,7 +2,7 @@ package perfgraph
 
 import (
 	"fmt"
-	"github.com/shibukawa/nanovgo"
+	"github.com/jxo/davinci"
 	"time"
 )
 
@@ -10,12 +10,12 @@ const (
 	nvgGraphHistoryCount = 100
 )
 
-var backgroundColor = nanovgo.RGBA(0, 0, 0, 128)
-var graphColor  = nanovgo.RGBA(255, 192, 0, 128)
-var titleTextColor  = nanovgo.RGBA(255, 192, 0, 128)
-var fpsTextColor = nanovgo.RGBA(240, 240, 240, 255)
-var averageTextColor  = nanovgo.RGBA(240, 240, 240, 160)
-var msTextColor = nanovgo.RGBA(240, 240, 240, 255)
+var backgroundColor = davinci.RGBA(0, 0, 0, 128)
+var graphColor  = davinci.RGBA(255, 192, 0, 128)
+var titleTextColor  = davinci.RGBA(255, 192, 0, 128)
+var fpsTextColor = davinci.RGBA(240, 240, 240, 255)
+var averageTextColor  = davinci.RGBA(240, 240, 240, 160)
+var msTextColor = davinci.RGBA(240, 240, 240, 255)
 
 // PerfGraph shows FPS counter on NanoVGo application
 type PerfGraph struct {
@@ -51,7 +51,7 @@ func (pg *PerfGraph) UpdateGraph() (timeFromStart, frameTime float32) {
 }
 
 // RenderGraph shows graph
-func (pg *PerfGraph) RenderGraph(ctx *nanovgo.Context, x, y float32) {
+func (pg *PerfGraph) RenderGraph(ctx *davinci.Context, x, y float32) {
 	avg := pg.GetGraphAverage()
 	var w float32 = 200
 	var h float32 = 35
@@ -80,18 +80,18 @@ func (pg *PerfGraph) RenderGraph(ctx *nanovgo.Context, x, y float32) {
 
 	if len(pg.name) > 0 {
 		ctx.SetFontSize(14.0)
-		ctx.SetTextAlign(nanovgo.AlignLeft | nanovgo.AlignTop)
+		ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignTop)
 		ctx.SetFillColor(titleTextColor)
 		ctx.Text(x+3, y+1, pg.name)
 	}
 
 	ctx.SetFontSize(18.0)
-	ctx.SetTextAlign(nanovgo.AlignRight | nanovgo.AlignTop)
+	ctx.SetTextAlign(davinci.AlignRight | davinci.AlignTop)
 	ctx.SetFillColor(fpsTextColor)
 	ctx.Text(x+w-3, y+1, fmt.Sprintf("%.2f FPS", 1.0/avg))
 
 	ctx.SetFontSize(15.0)
-	ctx.SetTextAlign(nanovgo.AlignRight | nanovgo.AlignBottom)
+	ctx.SetTextAlign(davinci.AlignRight | davinci.AlignBottom)
 	ctx.SetFillColor(averageTextColor)
 	ctx.Text(x+w-3, y+h+1, fmt.Sprintf("%.2f ms", avg*1000.0))
 }

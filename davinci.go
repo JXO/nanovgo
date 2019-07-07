@@ -1,8 +1,8 @@
-package nanovgo
+package davinci
 
 import (
 	"bytes"
-	"github.com/shibukawa/nanovgo/fontstashmini"
+	"github.com/jxo/davinci/fontstashmini"
 	"image"
 	_ "image/jpeg" // to read jpeg
 	_ "image/png"  // to read png
