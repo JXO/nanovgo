@@ -11,13 +11,13 @@ const (
 )
 
 var backgroundColor = davinci.RGBA(0, 0, 0, 128)
-var graphColor  = davinci.RGBA(255, 192, 0, 128)
-var titleTextColor  = davinci.RGBA(255, 192, 0, 128)
+var graphColor = davinci.RGBA(255, 192, 0, 128)
+var titleTextColor = davinci.RGBA(255, 192, 0, 128)
 var fpsTextColor = davinci.RGBA(240, 240, 240, 255)
-var averageTextColor  = davinci.RGBA(240, 240, 240, 160)
+var averageTextColor = davinci.RGBA(240, 240, 240, 160)
 var msTextColor = davinci.RGBA(240, 240, 240, 255)
 
-// PerfGraph shows FPS counter on NanoVGo application
+// PerfGraph shows FPS counter on DaVinci application
 type PerfGraph struct {
 	name     string
 	fontFace string

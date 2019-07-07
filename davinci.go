@@ -10,11 +10,11 @@ import (
 	"os"
 )
 
-// Context is an entry point object to use NanoVGo API and created by NewContext() function.
+// Context is an entry point object to use DaVinci API and created by NewContext() function.
 //
 // State Handling
 //
-// NanoVG contains state which represents how paths will be rendered.
+// DaVinci contains state which represents how paths will be rendered.
 // The state contains transform, fill and stroke styles, text and font styles,
 // and scissor clipping.
 //
@@ -44,13 +44,13 @@ import (
 //
 // Images
 //
-// NanoVG allows you to load jpg, png, psd, tga, pic and gif files to be used for rendering.
+// DaVinci allows you to load jpg, png, psd, tga, pic and gif files to be used for rendering.
 // In addition you can upload your own image. The image loading is provided by stb_image.
 // The parameter imageFlags is combination of flags defined in ImageFlags.
 //
 // Paints
 //
-// NanoVG supports four types of paints: linear gradient, box gradient, radial gradient and image pattern.
+// DaVinci supports four types of paints: linear gradient, box gradient, radial gradient and image pattern.
 // These can be used as paints for strokes and fills.
 //
 // Scissoring
@@ -65,7 +65,7 @@ import (
 // to draw common shapes like rectangles and circles, and lower level step-by-step functions,
 // which allow to define a path curve by curve.
 //
-// NanoVG uses even-odd fill rule to draw the shapes. Solid shapes should have counter clockwise
+// DaVinci uses even-odd fill rule to draw the shapes. Solid shapes should have counter clockwise
 // winding and holes should have counter clockwise order. To specify winding of a path you can
 // call PathWinding(). This is useful especially for the common shapes, which are drawn CCW.
 //
@@ -76,7 +76,7 @@ import (
 //
 // Text
 //
-// NanoVG allows you to load .ttf files and use the font to render text.
+// DaVinci allows you to load .ttf files and use the font to render text.
 //
 // The appearance of the text can be defined by setting the current text style
 // and by specifying the fill color. Common text and font settings such as
@@ -124,7 +124,7 @@ type Context struct {
 	textTriCount   int
 }
 
-// Delete is called when tearing down NanoVGo context
+// Delete is called when tearing down DaVinci context
 func (c *Context) Delete() {
 
 	for i, fontImage := range c.fontImages {
@@ -137,7 +137,7 @@ func (c *Context) Delete() {
 }
 
 // BeginFrame begins drawing a new frame
-// Calls to NanoVGo drawing API should be wrapped in Context.BeginFrame() & Context.EndFrame()
+// Calls to DaVinci drawing API should be wrapped in Context.BeginFrame() & Context.EndFrame()
 // Context.BeginFrame() defines the size of the window to render to in relation currently
 // set viewport (i.e. glViewport on GL backends). Device pixel ration allows to
 // control the rendering on Hi-DPI devices.

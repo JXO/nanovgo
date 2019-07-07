@@ -35,7 +35,7 @@ func main() {
 	// demo MSAA
 	glfw.WindowHint(glfw.Samples, 4)
 
-	window, err := glfw.CreateWindow(1000, 600, "NanoVGo", nil, nil)
+	window, err := glfw.CreateWindow(1000, 600, "DaVinci", nil, nil)
 	if err != nil {
 		panic(err)
 	}

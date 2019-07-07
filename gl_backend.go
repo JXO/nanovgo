@@ -14,7 +14,7 @@ const (
 	glnvgMaxLOCS
 )
 
-// NewContext makes new NanoVGo context that is entry point of this API
+// NewContext makes new DaVinci context that is entry point of this API
 func NewContext(flags CreateFlags) (*Context, error) {
 	params := &glParams{
 		isEdgeAntiAlias: (flags & AntiAlias) != 0,
@@ -900,7 +900,7 @@ func maxVertexCount(paths []nvgPath) int {
 }
 
 var fillVertexShader = `
-#ifdef NANOVG_GL3
+#ifdef DAVINCI_GL3
    uniform vec2 viewSize;
    in vec2 vertex;
    in vec2 tcoord;
@@ -921,13 +921,13 @@ void main(void) {
 
 var fillFragmentShader = `
 #ifdef GL_ES
-#if defined(GL_FRAGMENT_PRECISION_HIGH) || defined(NANOVG_GL3)
+#if defined(GL_FRAGMENT_PRECISION_HIGH) || defined(DAVINCI_GL3)
  precision highp float;
 #else
  precision mediump float;
 #endif
 #endif
-#ifdef NANOVG_GL3
+#ifdef DAVINCI_GL3
 #ifdef USE_UNIFORMBUFFER
        layout(std140) uniform frag {
                mat3 scissorMat;
@@ -945,7 +945,7 @@ var fillFragmentShader = `
                int type;
        };
 #else
-       // NANOVG_GL3 && !USE_UNIFORMBUF
+       // DAVINCI_GL3 && !USE_UNIFORMBUF
        uniform vec4 frag[UNIFORMARRAY_SIZE];
 #endif
        uniform sampler2D tex;
@@ -953,7 +953,7 @@ var fillFragmentShader = `
        in vec2 fpos;
        out vec4 outColor;
 #else
-       // !NANOVG_GL3
+       // !DAVINCI_GL3
        uniform vec4 frag[UNIFORMARRAY_SIZE];
        uniform sampler2D tex;
        varying vec2 ftcoord;
@@ -1013,7 +1013,7 @@ void main(void) {
        } else if (type == 1) {         // Image
                // Calculate color fron texture
                vec2 pt = (paintMat * vec3(fpos,1.0)).xy / extent;
-#ifdef NANOVG_GL3
+#ifdef DAVINCI_GL3
                vec4 color = texture(tex, pt);
 #else
                vec4 color = texture2D(tex, pt);
@@ -1028,7 +1028,7 @@ void main(void) {
        } else if (type == 2) {         // Stencil fill
                result = vec4(1,1,1,1);
        } else if (type == 3) {         // Textured tris
-#ifdef NANOVG_GL3
+#ifdef DAVINCI_GL3
                vec4 color = texture(tex, ftcoord);
 #else
                vec4 color = texture2D(tex, ftcoord);
@@ -1041,7 +1041,7 @@ void main(void) {
 #ifdef EDGE_AA
        if (strokeAlpha < strokeThr) discard;
 #endif
-#ifdef NANOVG_GL3
+#ifdef DAVINCI_GL3
        outColor = result;
 #else
        gl_FragColor = result;

@@ -1,5 +1,11 @@
-NanoVGo
+DaVinci
 =============
+
+DaVinci is forked from NanoVGo.
+A vector graphics engine inspired by HTML5 Canvas API.
+
+NanoVGo
+---------------
 
 Pure golang implementation of `NanoVG <https://github.com/memononen/nanovg>`_. NanoVG is a vector graphics engine inspired by HTML5 Canvas API.
 

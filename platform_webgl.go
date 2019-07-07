@@ -10,7 +10,7 @@ import (
 
 var shaderHeader string = `
 #version 100
-#define NANOVG_GL2 1
+#define DAVINCI_GL2 1
 #define UNIFORMARRAY_SIZE 11
 `
 
@@ -32,6 +32,6 @@ func castFloat32ToByte(vertexes []float32) []byte {
 	return b
 }
 
-func dumpLog(values ...interface{}) {
+func dumpLog(fmt string, values ...interface{}) {
 	console.Log(values...)
 }

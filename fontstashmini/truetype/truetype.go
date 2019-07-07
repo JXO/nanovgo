@@ -870,7 +870,6 @@ func (font *FontInfo) FindGlyphIndex(unicodeCodepoint int) int {
 		return 0
 	} else if format == 2 {
 		panic("TODO: high-byte mapping for japanese/chinese/korean")
-		return 0
 	} else if format == 4 {
 		segcount := int(u16(data, indexMap+6) >> 1)
 		searchRange := int(u16(data, indexMap+8) >> 1)
@@ -942,7 +941,6 @@ func (font *FontInfo) FindGlyphIndex(unicodeCodepoint int) int {
 		return 0 // not found
 	}
 	panic("Glyph not found!")
-	return 0
 }
 
 func findTable(data []byte, offset int, tag string) int {

@@ -1,12 +1,12 @@
 package davinci
 
-// CreateFlags is used when NewContext() to create NanoVGo context.
+// CreateFlags is used when NewContext() to create DaVinci context.
 type CreateFlags int
 
 const (
-	// AntiAlias sets NanoVGo to use AA
+	// AntiAlias sets DaVinci to use AA
 	AntiAlias CreateFlags = 1 << 0
-	// StencilStrokes sets NanoVGo to use stencil buffer to draw strokes
+	// StencilStrokes sets DaVinci to use stencil buffer to draw strokes
 	StencilStrokes CreateFlags = 1 << 1
 	// Debug shows OpenGL errors to console
 	Debug CreateFlags = 1 << 2

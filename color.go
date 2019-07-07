@@ -6,7 +6,7 @@ import (
 
 // Color utils
 //
-// Colors in NanoVGo are stored as unsigned ints in ABGR format.
+// Colors in DaVinci are stored as unsigned ints in ABGR format.
 type Color struct {
 	R, G, B, A float32
 }
