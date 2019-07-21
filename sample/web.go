@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/goxjs/gl"
 	"github.com/goxjs/glfw"
-	"github.com/jxo/davinci"
 	"github.com/jxo/davinci/perfgraph"
 	"github.com/jxo/davinci/sample/demo"
+	"github.com/jxo/davinci/vg"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -44,7 +44,7 @@ func main() {
 	window.SetKeyCallback(key)
 	window.MakeContextCurrent()
 
-	ctx, err := davinci.NewContext(0)
+	ctx, err := vg.NewContext(0)
 	defer ctx.Delete()
 
 	if err != nil {
@@ -92,7 +92,7 @@ func main() {
 	demoData.FreeData(ctx)
 }
 
-func LoadDemo(ctx *davinci.Context) *demo.DemoData {
+func LoadDemo(ctx *vg.Context) *demo.DemoData {
 	d := &demo.DemoData{}
 	for i := 0; i < 12; i++ {
 		path := fmt.Sprintf("assets/image%d.jpg", i+1)

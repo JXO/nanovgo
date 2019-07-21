@@ -1,9 +1,10 @@
 package demo
 
 import (
-	"github.com/jxo/davinci"
 	"math"
 	"strconv"
+
+	"github.com/jxo/davinci/vg"
 )
 
 const (
@@ -21,13 +22,13 @@ type DemoData struct {
 	Images                          []int
 }
 
-func (d *DemoData) FreeData(ctx *davinci.Context) {
+func (d *DemoData) FreeData(ctx *vg.Context) {
 	for _, img := range d.Images {
 		ctx.DeleteImage(img)
 	}
 }
 
-func RenderDemo(ctx *davinci.Context, mx, my, width, height, t float32, blowup bool, data *DemoData) {
+func RenderDemo(ctx *vg.Context, mx, my, width, height, t float32, blowup bool, data *DemoData) {
 	drawEyes(ctx, width-250, 50, 150, 100, mx, my, t)
 	drawParagraph(ctx, width-450, 50, 150, 100, mx, my)
 	drawGraph(ctx, 0, height/2, width, height/2, t)
@@ -48,7 +49,7 @@ func RenderDemo(ctx *davinci.Context, mx, my, width, height, t float32, blowup b
 	defer ctx.Restore()
 
 	if blowup {
-		ctx.Rotate(sinF(t*0.3) * 5.0 / 180.0 * davinci.PI)
+		ctx.Rotate(sinF(t*0.3) * 5.0 / 180.0 * vg.PI)
 		ctx.Scale(2.0, 2.0)
 	}
 
@@ -70,7 +71,7 @@ func RenderDemo(ctx *davinci.Context, mx, my, width, height, t float32, blowup b
 	drawEditBox(ctx, "Password", x, y, 280, 28)
 	y += 38
 	drawCheckBox(ctx, "Remember me", x, y, 140, 28)
-	drawButton(ctx, IconLOGIN, "Sign in", x+138, y, 140, 28, davinci.RGBA(0, 96, 128, 255))
+	drawButton(ctx, IconLOGIN, "Sign in", x+138, y, 140, 28, vg.RGBA(0, 96, 128, 255))
 	y += 45
 
 	// Slider
@@ -80,8 +81,8 @@ func RenderDemo(ctx *davinci.Context, mx, my, width, height, t float32, blowup b
 	drawSlider(ctx, 0.4, x, y, 170, 28)
 	y += 55
 
-	drawButton(ctx, IconTRASH, "Delete", x, y, 160, 28, davinci.RGBA(128, 16, 8, 255))
-	drawButton(ctx, 0, "Cancel", x+170, y, 110, 28, davinci.RGBA(0, 0, 0, 0))
+	drawButton(ctx, IconTRASH, "Delete", x, y, 160, 28, vg.RGBA(128, 16, 8, 255))
+	drawButton(ctx, 0, "Cancel", x+170, y, 110, 28, vg.RGBA(0, 0, 0, 0))
 
 	// Thumbnails box
 	drawThumbnails(ctx, 365, popy-30, 160, 300, data.Images, t)
@@ -118,7 +119,7 @@ func maxF(a, b float32) float32 {
 	return b
 }
 
-func isBlack(col davinci.Color) bool {
+func isBlack(col vg.Color) bool {
 	return col.R == 0.0 && col.G == 0.0 && col.B == 0.0 && col.A == 0.0
 }
 
@@ -126,7 +127,7 @@ func cpToUTF8(cp int) string {
 	return string([]rune{rune(cp)})
 }
 
-func drawWindow(ctx *davinci.Context, title string, x, y, w, h float32) {
+func drawWindow(ctx *vg.Context, title string, x, y, w, h float32) {
 	var cornerRadius float32 = 3.0
 
 	ctx.Save()
@@ -136,21 +137,21 @@ func drawWindow(ctx *davinci.Context, title string, x, y, w, h float32) {
 	// Window
 	ctx.BeginPath()
 	ctx.RoundedRect(x, y, w, h, cornerRadius)
-	ctx.SetFillColor(davinci.RGBA(28, 30, 34, 192))
-	//      ctx.FillColor(davinci.RGBA(0,0,0,128));
+	ctx.SetFillColor(vg.RGBA(28, 30, 34, 192))
+	//      ctx.FillColor(vg.RGBA(0,0,0,128));
 	ctx.Fill()
 
 	// Drop shadow
-	shadowPaint := davinci.BoxGradient(x, y+2, w, h, cornerRadius*2, 10, davinci.RGBA(0, 0, 0, 128), davinci.RGBA(0, 0, 0, 0))
+	shadowPaint := vg.BoxGradient(x, y+2, w, h, cornerRadius*2, 10, vg.RGBA(0, 0, 0, 128), vg.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(x-10, y-10, w+20, h+30)
 	ctx.RoundedRect(x, y, w, h, cornerRadius)
-	ctx.PathWinding(davinci.Hole)
+	ctx.PathWinding(vg.Hole)
 	ctx.SetFillPaint(shadowPaint)
 	ctx.Fill()
 
 	// Header
-	headerPaint := davinci.LinearGradient(x, y, x, y+15, davinci.RGBA(255, 255, 255, 8), davinci.RGBA(0, 0, 0, 16))
+	headerPaint := vg.LinearGradient(x, y, x, y+15, vg.RGBA(255, 255, 255, 8), vg.RGBA(0, 0, 0, 16))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+1, w-2, 30, cornerRadius-1)
 	ctx.SetFillPaint(headerPaint)
@@ -158,27 +159,27 @@ func drawWindow(ctx *davinci.Context, title string, x, y, w, h float32) {
 	ctx.BeginPath()
 	ctx.MoveTo(x+0.5, y+0.5+30)
 	ctx.LineTo(x+0.5+w-1, y+0.5+30)
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 32))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 32))
 	ctx.Stroke()
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans-bold")
-	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
+	ctx.SetTextAlign(vg.AlignCenter | vg.AlignMiddle)
 
 	ctx.SetFontBlur(2)
-	ctx.SetFillColor(davinci.RGBA(0, 0, 0, 128))
+	ctx.SetFillColor(vg.RGBA(0, 0, 0, 128))
 	ctx.Text(x+w/2, y+16+1, title)
 
 	ctx.SetFontBlur(0)
-	ctx.SetFillColor(davinci.RGBA(220, 220, 220, 160))
+	ctx.SetFillColor(vg.RGBA(220, 220, 220, 160))
 	ctx.Text(x+w/2, y+16, title)
 }
 
-func drawSearchBox(ctx *davinci.Context, text string, x, y, w, h float32) {
+func drawSearchBox(ctx *vg.Context, text string, x, y, w, h float32) {
 	cornerRadius := h/2 - 1
 
 	// Edit
-	bg := davinci.BoxGradient(x, y+1.5, w, h, h/2, 5, davinci.RGBA(0, 0, 0, 16), davinci.RGBA(0, 0, 0, 92))
+	bg := vg.BoxGradient(x, y+1.5, w, h, h/2, 5, vg.RGBA(0, 0, 0, 16), vg.RGBA(0, 0, 0, 92))
 	ctx.BeginPath()
 	ctx.RoundedRect(x, y, w, h, cornerRadius)
 	ctx.SetFillPaint(bg)
@@ -191,29 +192,29 @@ func drawSearchBox(ctx *davinci.Context, text string, x, y, w, h float32) {
 
 	ctx.SetFontSize(h * 1.3)
 	ctx.SetFontFace("icons")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 64))
-	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 64))
+	ctx.SetTextAlign(vg.AlignCenter | vg.AlignMiddle)
 	ctx.Text(x+h*0.55, y+h*0.55, cpToUTF8(IconSEARCH))
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 32))
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 32))
 
-	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
+	ctx.SetTextAlign(vg.AlignLeft | vg.AlignMiddle)
 	ctx.Text(x+h*1.05, y+h*0.5, text)
 
 	ctx.SetFontSize(h * 1.3)
 	ctx.SetFontFace("icons")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 32))
-	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 32))
+	ctx.SetTextAlign(vg.AlignCenter | vg.AlignMiddle)
 	ctx.Text(x+w-h*0.55, y+h*0.55, cpToUTF8(IconCIRCLEDCROSS))
 }
 
-func drawDropDown(ctx *davinci.Context, text string, x, y, w, h float32) {
+func drawDropDown(ctx *vg.Context, text string, x, y, w, h float32) {
 
 	var cornerRadius float32 = 4.0
 
-	bg := davinci.LinearGradient(x, y, x, y+h, davinci.RGBA(255, 255, 255, 16), davinci.RGBA(0, 0, 0, 16))
+	bg := vg.LinearGradient(x, y, x, y+h, vg.RGBA(255, 255, 255, 16), vg.RGBA(0, 0, 0, 16))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+1, w-2, h-2, cornerRadius-1)
 	ctx.SetFillPaint(bg)
@@ -221,25 +222,25 @@ func drawDropDown(ctx *davinci.Context, text string, x, y, w, h float32) {
 
 	ctx.BeginPath()
 	ctx.RoundedRect(x+0.5, y+0.5, w-1, h-1, cornerRadius-0.5)
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 48))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 48))
 	ctx.Stroke()
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 160))
-	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 160))
+	ctx.SetTextAlign(vg.AlignLeft | vg.AlignMiddle)
 	ctx.Text(x+h*0.3, y+h*0.5, text)
 
 	ctx.SetFontSize(h * 1.3)
 	ctx.SetFontFace("icons")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 64))
-	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 64))
+	ctx.SetTextAlign(vg.AlignCenter | vg.AlignMiddle)
 	ctx.Text(x+w-h*0.5, y+h*0.5, cpToUTF8(IconCHEVRONRIGHT))
 }
 
-func drawEditBoxBase(ctx *davinci.Context, x, y, w, h float32) {
+func drawEditBoxBase(ctx *vg.Context, x, y, w, h float32) {
 	// Edit
-	bg := davinci.BoxGradient(x+1, y+1+1.5, w-2, h-2, 3, 4, davinci.RGBA(255, 255, 255, 32), davinci.RGBA(32, 32, 32, 32))
+	bg := vg.BoxGradient(x+1, y+1+1.5, w-2, h-2, 3, 4, vg.RGBA(255, 255, 255, 32), vg.RGBA(32, 32, 32, 32))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+1, w-2, h-2, 4-1)
 	ctx.SetFillPaint(bg)
@@ -247,59 +248,59 @@ func drawEditBoxBase(ctx *davinci.Context, x, y, w, h float32) {
 
 	ctx.BeginPath()
 	ctx.RoundedRect(x+0.5, y+0.5, w-1, h-1, 4-0.5)
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 48))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 48))
 	ctx.Stroke()
 }
 
-func drawEditBox(ctx *davinci.Context, text string, x, y, w, h float32) {
+func drawEditBox(ctx *vg.Context, text string, x, y, w, h float32) {
 
 	drawEditBoxBase(ctx, x, y, w, h)
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 64))
-	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 64))
+	ctx.SetTextAlign(vg.AlignLeft | vg.AlignMiddle)
 	ctx.Text(x+h*0.3, y+h*0.5, text)
 }
 
-func drawLabel(ctx *davinci.Context, text string, x, y, w, h float32) {
+func drawLabel(ctx *vg.Context, text string, x, y, w, h float32) {
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 128))
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 128))
 
-	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
+	ctx.SetTextAlign(vg.AlignLeft | vg.AlignMiddle)
 	ctx.Text(x, y+h*0.5, text)
 }
 
-func drawEditBoxNum(ctx *davinci.Context, text, units string, x, y, w, h float32) {
+func drawEditBoxNum(ctx *vg.Context, text, units string, x, y, w, h float32) {
 	drawEditBoxBase(ctx, x, y, w, h)
 
 	uw, _ := ctx.TextBounds(0, 0, units)
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 64))
-	ctx.SetTextAlign(davinci.AlignRight | davinci.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 64))
+	ctx.SetTextAlign(vg.AlignRight | vg.AlignMiddle)
 	ctx.Text(x+w-h*0.3, y+h*0.5, units)
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 128))
-	ctx.SetTextAlign(davinci.AlignRight | davinci.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 128))
+	ctx.SetTextAlign(vg.AlignRight | vg.AlignMiddle)
 	ctx.Text(x+w-uw-h*0.5, y+h*0.5, text)
 }
 
-func drawCheckBox(ctx *davinci.Context, text string, x, y, w, h float32) {
+func drawCheckBox(ctx *vg.Context, text string, x, y, w, h float32) {
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 160))
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 160))
 
-	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
+	ctx.SetTextAlign(vg.AlignLeft | vg.AlignMiddle)
 	ctx.Text(x+28, y+h*0.5, text)
 
-	bg := davinci.BoxGradient(x+1, y+float32(int(h*0.5))-9+1, 18, 18, 3, 3, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 92))
+	bg := vg.BoxGradient(x+1, y+float32(int(h*0.5))-9+1, 18, 18, 3, 3, vg.RGBA(0, 0, 0, 32), vg.RGBA(0, 0, 0, 92))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+float32(int(h*0.5))-9, 18, 18, 3)
 	ctx.SetFillPaint(bg)
@@ -307,12 +308,12 @@ func drawCheckBox(ctx *davinci.Context, text string, x, y, w, h float32) {
 
 	ctx.SetFontSize(40)
 	ctx.SetFontFace("icons")
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 128))
-	ctx.SetTextAlign(davinci.AlignCenter | davinci.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 128))
+	ctx.SetTextAlign(vg.AlignCenter | vg.AlignMiddle)
 	ctx.Text(x+9+2, y+h*0.5, cpToUTF8(IconCHECK))
 }
 
-func drawButton(ctx *davinci.Context, preicon int, text string, x, y, w, h float32, col davinci.Color) {
+func drawButton(ctx *vg.Context, preicon int, text string, x, y, w, h float32, col vg.Color) {
 	var cornerRadius float32 = 4.0
 	var iw float32
 
@@ -322,7 +323,7 @@ func drawButton(ctx *davinci.Context, preicon int, text string, x, y, w, h float
 	} else {
 		alpha = 32
 	}
-	bg := davinci.LinearGradient(x, y, x, y+h, davinci.RGBA(255, 255, 255, alpha), davinci.RGBA(0, 0, 0, alpha))
+	bg := vg.LinearGradient(x, y, x, y+h, vg.RGBA(255, 255, 255, alpha), vg.RGBA(0, 0, 0, alpha))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+1, y+1, w-2, h-2, cornerRadius-1)
 	if !isBlack(col) {
@@ -334,7 +335,7 @@ func drawButton(ctx *davinci.Context, preicon int, text string, x, y, w, h float
 
 	ctx.BeginPath()
 	ctx.RoundedRect(x+0.5, y+0.5, w-1, h-1, cornerRadius-0.5)
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 48))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 48))
 	ctx.Stroke()
 
 	ctx.SetFontSize(20.0)
@@ -346,21 +347,21 @@ func drawButton(ctx *davinci.Context, preicon int, text string, x, y, w, h float
 		iw, _ = ctx.TextBounds(0, 0, cpToUTF8(preicon))
 		iw += h * 0.15
 
-		ctx.SetFillColor(davinci.RGBA(255, 255, 255, 96))
-		ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
+		ctx.SetFillColor(vg.RGBA(255, 255, 255, 96))
+		ctx.SetTextAlign(vg.AlignLeft | vg.AlignMiddle)
 		ctx.Text(x+w*0.5-tw*0.5-iw*0.75, y+h*0.5, cpToUTF8(preicon))
 	}
 
 	ctx.SetFontSize(20.0)
 	ctx.SetFontFace("sans-bold")
-	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignMiddle)
-	ctx.SetFillColor(davinci.RGBA(0, 0, 0, 160))
+	ctx.SetTextAlign(vg.AlignLeft | vg.AlignMiddle)
+	ctx.SetFillColor(vg.RGBA(0, 0, 0, 160))
 	ctx.Text(x+w*0.5-tw*0.5+iw*0.25, y+h*0.5-1, text)
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 160))
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 160))
 	ctx.Text(x+w*0.5-tw*0.5+iw*0.25, y+h*0.5, text)
 }
 
-func drawSlider(ctx *davinci.Context, pos, x, y, w, h float32) {
+func drawSlider(ctx *vg.Context, pos, x, y, w, h float32) {
 	cy := y + float32(int(h*0.5))
 	kr := float32(int(h * 0.25))
 
@@ -369,37 +370,37 @@ func drawSlider(ctx *davinci.Context, pos, x, y, w, h float32) {
 	//      ctx.ClearState(vg);
 
 	// Slot
-	bg := davinci.BoxGradient(x, cy-2+1, w, 4, 2, 2, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 128))
+	bg := vg.BoxGradient(x, cy-2+1, w, 4, 2, 2, vg.RGBA(0, 0, 0, 32), vg.RGBA(0, 0, 0, 128))
 	ctx.BeginPath()
 	ctx.RoundedRect(x, cy-2, w, 4, 2)
 	ctx.SetFillPaint(bg)
 	ctx.Fill()
 
 	// Knob Shadow
-	bg = davinci.RadialGradient(x+float32(int(pos*w)), cy+1, kr-3, kr+3, davinci.RGBA(0, 0, 0, 64), davinci.RGBA(0, 0, 0, 0))
+	bg = vg.RadialGradient(x+float32(int(pos*w)), cy+1, kr-3, kr+3, vg.RGBA(0, 0, 0, 64), vg.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(x+float32(int(pos*w))-kr-5, cy-kr-5, kr*2+5+5, kr*2+5+5+3)
 	ctx.Circle(x+float32(int(pos*w)), cy, kr)
-	ctx.PathWinding(davinci.Hole)
+	ctx.PathWinding(vg.Hole)
 	ctx.SetFillPaint(bg)
 	ctx.Fill()
 
 	// Knob
-	knob := davinci.LinearGradient(x, cy-kr, x, cy+kr, davinci.RGBA(255, 255, 255, 16), davinci.RGBA(0, 0, 0, 16))
+	knob := vg.LinearGradient(x, cy-kr, x, cy+kr, vg.RGBA(255, 255, 255, 16), vg.RGBA(0, 0, 0, 16))
 	ctx.BeginPath()
 	ctx.Circle(x+float32(int(pos*w)), cy, kr-1)
-	ctx.SetFillColor(davinci.RGBA(40, 43, 48, 255))
+	ctx.SetFillColor(vg.RGBA(40, 43, 48, 255))
 	ctx.Fill()
 	ctx.SetFillPaint(knob)
 	ctx.Fill()
 
 	ctx.BeginPath()
 	ctx.Circle(x+float32(int(pos*w)), cy, kr-0.5)
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 92))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 92))
 	ctx.Stroke()
 }
 
-func drawEyes(ctx *davinci.Context, x, y, w, h, mx, my, t float32) {
+func drawEyes(ctx *vg.Context, x, y, w, h, mx, my, t float32) {
 	ex := w * 0.23
 	ey := h * 0.5
 	lx := x + ex
@@ -414,14 +415,14 @@ func drawEyes(ctx *davinci.Context, x, y, w, h, mx, my, t float32) {
 	}
 	blink := float32(1.0 - math.Pow(float64(sinF(t*0.5)), 200)*0.8)
 
-	bg1 := davinci.LinearGradient(x, y+h*0.5, x+w*0.1, y+h, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 16))
+	bg1 := vg.LinearGradient(x, y+h*0.5, x+w*0.1, y+h, vg.RGBA(0, 0, 0, 32), vg.RGBA(0, 0, 0, 16))
 	ctx.BeginPath()
 	ctx.Ellipse(lx+3.0, ly+16.0, ex, ey)
 	ctx.Ellipse(rx+3.0, ry+16.0, ex, ey)
 	ctx.SetFillPaint(bg1)
 	ctx.Fill()
 
-	bg2 := davinci.LinearGradient(x, y+h*0.25, x+w*0.1, y+h, davinci.RGBA(220, 220, 220, 255), davinci.RGBA(128, 128, 128, 255))
+	bg2 := vg.LinearGradient(x, y+h*0.25, x+w*0.1, y+h, vg.RGBA(220, 220, 220, 255), vg.RGBA(128, 128, 128, 255))
 	ctx.BeginPath()
 	ctx.Ellipse(lx, ly, ex, ey)
 	ctx.Ellipse(rx, ry, ex, ey)
@@ -439,7 +440,7 @@ func drawEyes(ctx *davinci.Context, x, y, w, h, mx, my, t float32) {
 	dy *= ey * 0.5
 	ctx.BeginPath()
 	ctx.Ellipse(lx+dx, ly+dy+ey*0.25*(1.0-blink), br, br*blink)
-	ctx.SetFillColor(davinci.RGBA(32, 32, 32, 255))
+	ctx.SetFillColor(vg.RGBA(32, 32, 32, 255))
 	ctx.Fill()
 
 	dx = (mx - rx) / (ex * 10)
@@ -453,7 +454,7 @@ func drawEyes(ctx *davinci.Context, x, y, w, h, mx, my, t float32) {
 	dy *= ey * 0.5
 	ctx.BeginPath()
 	ctx.Ellipse(rx+dx, ry+dy+ey*0.25*(1.0-blink), br, br*blink)
-	ctx.SetFillColor(davinci.RGBA(32, 32, 32, 255))
+	ctx.SetFillColor(vg.RGBA(32, 32, 32, 255))
 	ctx.Fill()
 	dx = (mx - rx) / (ex * 10)
 	dy = (my - ry) / (ey * 10)
@@ -466,23 +467,23 @@ func drawEyes(ctx *davinci.Context, x, y, w, h, mx, my, t float32) {
 	dy *= ey * 0.5
 	ctx.BeginPath()
 	ctx.Ellipse(rx+dx, ry+dy+ey*0.25*(1.0-blink), br, br*blink)
-	ctx.SetFillColor(davinci.RGBA(32, 32, 32, 255))
+	ctx.SetFillColor(vg.RGBA(32, 32, 32, 255))
 	ctx.Fill()
 
-	gloss1 := davinci.RadialGradient(lx-ex*0.25, ly-ey*0.5, ex*0.1, ex*0.75, davinci.RGBA(255, 255, 255, 128), davinci.RGBA(255, 255, 255, 0))
+	gloss1 := vg.RadialGradient(lx-ex*0.25, ly-ey*0.5, ex*0.1, ex*0.75, vg.RGBA(255, 255, 255, 128), vg.RGBA(255, 255, 255, 0))
 	ctx.BeginPath()
 	ctx.Ellipse(lx, ly, ex, ey)
 	ctx.SetFillPaint(gloss1)
 	ctx.Fill()
 
-	gloss2 := davinci.RadialGradient(rx-ex*0.25, ry-ey*0.5, ex*0.1, ex*0.75, davinci.RGBA(255, 255, 255, 128), davinci.RGBA(255, 255, 255, 0))
+	gloss2 := vg.RadialGradient(rx-ex*0.25, ry-ey*0.5, ex*0.1, ex*0.75, vg.RGBA(255, 255, 255, 128), vg.RGBA(255, 255, 255, 0))
 	ctx.BeginPath()
 	ctx.Ellipse(rx, ry, ex, ey)
 	ctx.SetFillPaint(gloss2)
 	ctx.Fill()
 }
 
-func drawGraph(ctx *davinci.Context, x, y, w, h, t float32) {
+func drawGraph(ctx *vg.Context, x, y, w, h, t float32) {
 	var sx, sy [6]float32
 	dx := w / 5.0
 
@@ -501,7 +502,7 @@ func drawGraph(ctx *davinci.Context, x, y, w, h, t float32) {
 	}
 
 	// Graph background
-	bg := davinci.LinearGradient(x, y, x, y+h, davinci.RGBA(0, 160, 192, 0), davinci.RGBA(0, 160, 192, 64))
+	bg := vg.LinearGradient(x, y, x, y+h, vg.RGBA(0, 160, 192, 0), vg.RGBA(0, 160, 192, 64))
 	ctx.BeginPath()
 	ctx.MoveTo(sx[0], sy[0])
 	for i := 1; i < 6; i++ {
@@ -518,7 +519,7 @@ func drawGraph(ctx *davinci.Context, x, y, w, h, t float32) {
 	for i := 1; i < 6; i++ {
 		ctx.BezierTo(sx[i-1]+dx*0.5, sy[i-1]+2, sx[i]-dx*0.5, sy[i]+2, sx[i], sy[i]+2)
 	}
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 32))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 32))
 	ctx.SetStrokeWidth(3.0)
 	ctx.Stroke()
 
@@ -527,13 +528,13 @@ func drawGraph(ctx *davinci.Context, x, y, w, h, t float32) {
 	for i := 1; i < 6; i++ {
 		ctx.BezierTo(sx[i-1]+dx*0.5, sy[i-1], sx[i]-dx*0.5, sy[i], sx[i], sy[i])
 	}
-	ctx.SetStrokeColor(davinci.RGBA(0, 160, 192, 255))
+	ctx.SetStrokeColor(vg.RGBA(0, 160, 192, 255))
 	ctx.SetStrokeWidth(3.0)
 	ctx.Stroke()
 
 	// Graph sample pos
 	for i := 0; i < 6; i++ {
-		bg = davinci.RadialGradient(sx[i], sy[i]+2, 3.0, 8.0, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 0))
+		bg = vg.RadialGradient(sx[i], sy[i]+2, 3.0, 8.0, vg.RGBA(0, 0, 0, 32), vg.RGBA(0, 0, 0, 0))
 		ctx.BeginPath()
 		ctx.Rect(sx[i]-10, sy[i]-10+2, 20, 20)
 		ctx.SetFillPaint(bg)
@@ -544,21 +545,21 @@ func drawGraph(ctx *davinci.Context, x, y, w, h, t float32) {
 	for i := 0; i < 6; i++ {
 		ctx.Circle(sx[i], sy[i], 4.0)
 	}
-	ctx.SetFillColor(davinci.RGBA(0, 160, 192, 255))
+	ctx.SetFillColor(vg.RGBA(0, 160, 192, 255))
 	ctx.Fill()
 	ctx.BeginPath()
 	for i := 0; i < 6; i++ {
 		ctx.Circle(sx[i], sy[i], 2.0)
 	}
-	ctx.SetFillColor(davinci.RGBA(220, 220, 220, 255))
+	ctx.SetFillColor(vg.RGBA(220, 220, 220, 255))
 	ctx.Fill()
 
 	ctx.SetStrokeWidth(1.0)
 }
 
-func drawSpinner(ctx *davinci.Context, cx, cy, r, t float32) {
+func drawSpinner(ctx *vg.Context, cx, cy, r, t float32) {
 	a0 := 0.0 + t*6
-	a1 := davinci.PI + t*6
+	a1 := vg.PI + t*6
 	r0 := r
 	r1 := r * 0.75
 
@@ -566,19 +567,19 @@ func drawSpinner(ctx *davinci.Context, cx, cy, r, t float32) {
 	defer ctx.Restore()
 
 	ctx.BeginPath()
-	ctx.Arc(cx, cy, r0, a0, a1, davinci.Clockwise)
-	ctx.Arc(cx, cy, r1, a1, a0, davinci.CounterClockwise)
+	ctx.Arc(cx, cy, r0, a0, a1, vg.Clockwise)
+	ctx.Arc(cx, cy, r1, a1, a0, vg.CounterClockwise)
 	ctx.ClosePath()
 	ax := cx + cosF(a0)*(r0+r1)*0.5
 	ay := cy + sinF(a0)*(r0+r1)*0.5
 	bx := cx + cosF(a1)*(r0+r1)*0.5
 	by := cy + sinF(a1)*(r0+r1)*0.5
-	paint := davinci.LinearGradient(ax, ay, bx, by, davinci.RGBA(0, 0, 0, 0), davinci.RGBA(0, 0, 0, 128))
+	paint := vg.LinearGradient(ax, ay, bx, by, vg.RGBA(0, 0, 0, 0), vg.RGBA(0, 0, 0, 128))
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
 }
 
-func drawThumbnails(ctx *davinci.Context, x, y, w, h float32, images []int, t float32) {
+func drawThumbnails(ctx *vg.Context, x, y, w, h float32, images []int, t float32) {
 	var cornerRadius float32 = 3.0
 
 	var thumb float32 = 60.0
@@ -591,11 +592,11 @@ func drawThumbnails(ctx *davinci.Context, x, y, w, h float32, images []int, t fl
 	defer ctx.Restore()
 
 	// Drop shadow
-	shadowPaint := davinci.BoxGradient(x, y+4, w, h, cornerRadius*2, 20, davinci.RGBA(0, 0, 0, 128), davinci.RGBA(0, 0, 0, 0))
+	shadowPaint := vg.BoxGradient(x, y+4, w, h, cornerRadius*2, 20, vg.RGBA(0, 0, 0, 128), vg.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(x-10, y-10, w+20, h+30)
 	ctx.RoundedRect(x, y, w, h, cornerRadius)
-	ctx.PathWinding(davinci.Hole)
+	ctx.PathWinding(vg.Hole)
 	ctx.SetFillPaint(shadowPaint)
 	ctx.Fill()
 
@@ -605,7 +606,7 @@ func drawThumbnails(ctx *davinci.Context, x, y, w, h float32, images []int, t fl
 	ctx.MoveTo(x-10, y+arry)
 	ctx.LineTo(x+1, y+arry-11)
 	ctx.LineTo(x+1, y+arry+11)
-	ctx.SetFillColor(davinci.RGBA(200, 200, 200, 255))
+	ctx.SetFillColor(vg.RGBA(200, 200, 200, 255))
 	ctx.Fill()
 
 	ctx.Block(func() {
@@ -640,43 +641,43 @@ func drawThumbnails(ctx *davinci.Context, x, y, w, h float32, images []int, t fl
 				drawSpinner(ctx, tx+thumb/2, ty+thumb/2, thumb*0.25, t)
 			}
 
-			imgPaint := davinci.ImagePattern(tx+ix, ty+iy, iw, ih, 0.0/180.0*davinci.PI, imageID, a)
+			imgPaint := vg.ImagePattern(tx+ix, ty+iy, iw, ih, 0.0/180.0*vg.PI, imageID, a)
 			ctx.BeginPath()
 			ctx.RoundedRect(tx, ty, thumb, thumb, 5)
 			ctx.SetFillPaint(imgPaint)
 			ctx.Fill()
 
-			shadowPaint := davinci.BoxGradient(tx-1, ty, thumb+2, thumb+2, 5, 3, davinci.RGBA(0, 0, 0, 128), davinci.RGBA(0, 0, 0, 0))
+			shadowPaint := vg.BoxGradient(tx-1, ty, thumb+2, thumb+2, 5, 3, vg.RGBA(0, 0, 0, 128), vg.RGBA(0, 0, 0, 0))
 			ctx.BeginPath()
 			ctx.Rect(tx-5, ty-5, thumb+10, thumb+10)
 			ctx.RoundedRect(tx, ty, thumb, thumb, 6)
-			ctx.PathWinding(davinci.Hole)
+			ctx.PathWinding(vg.Hole)
 			ctx.SetFillPaint(shadowPaint)
 			ctx.Fill()
 
 			ctx.BeginPath()
 			ctx.RoundedRect(tx+0.5, ty+0.5, thumb-1, thumb-1, 4-0.5)
 			ctx.SetStrokeWidth(1.0)
-			ctx.SetStrokeColor(davinci.RGBA(255, 255, 255, 192))
+			ctx.SetStrokeColor(vg.RGBA(255, 255, 255, 192))
 			ctx.Stroke()
 		}
 	})
 
 	// Hide fades
-	fadePaint := davinci.LinearGradient(x, y, x, y+6, davinci.RGBA(200, 200, 200, 255), davinci.RGBA(200, 200, 200, 0))
+	fadePaint := vg.LinearGradient(x, y, x, y+6, vg.RGBA(200, 200, 200, 255), vg.RGBA(200, 200, 200, 0))
 	ctx.BeginPath()
 	ctx.Rect(x+4, y, w-8, 6)
 	ctx.SetFillPaint(fadePaint)
 	ctx.Fill()
 
-	fadePaint = davinci.LinearGradient(x, y+h, x, y+h-6, davinci.RGBA(200, 200, 200, 255), davinci.RGBA(200, 200, 200, 0))
+	fadePaint = vg.LinearGradient(x, y+h, x, y+h-6, vg.RGBA(200, 200, 200, 255), vg.RGBA(200, 200, 200, 0))
 	ctx.BeginPath()
 	ctx.Rect(x+4, y+h-6, w-8, 6)
 	ctx.SetFillPaint(fadePaint)
 	ctx.Fill()
 
 	// Scroll bar
-	shadowPaint = davinci.BoxGradient(x+w-12+1, y+4+1, 8, h-8, 3, 4, davinci.RGBA(0, 0, 0, 32), davinci.RGBA(0, 0, 0, 92))
+	shadowPaint = vg.BoxGradient(x+w-12+1, y+4+1, 8, h-8, 3, 4, vg.RGBA(0, 0, 0, 32), vg.RGBA(0, 0, 0, 92))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+w-12, y+4, 8, h-8, 3)
 	ctx.SetFillPaint(shadowPaint)
@@ -684,7 +685,7 @@ func drawThumbnails(ctx *davinci.Context, x, y, w, h float32, images []int, t fl
 	ctx.Fill()
 
 	scrollH := (h / stackh) * (h - 8)
-	shadowPaint = davinci.BoxGradient(x+w-12-1, y+4+(h-8-scrollH)*u-1, 8, scrollH, 3, 4, davinci.RGBA(220, 220, 220, 255), davinci.RGBA(128, 128, 128, 255))
+	shadowPaint = vg.BoxGradient(x+w-12-1, y+4+(h-8-scrollH)*u-1, 8, scrollH, 3, 4, vg.RGBA(220, 220, 220, 255), vg.RGBA(128, 128, 128, 255))
 	ctx.BeginPath()
 	ctx.RoundedRect(x+w-12+1, y+4+1+(h-8-scrollH)*u, 8-2, scrollH-2, 2)
 	ctx.SetFillPaint(shadowPaint)
@@ -692,7 +693,7 @@ func drawThumbnails(ctx *davinci.Context, x, y, w, h float32, images []int, t fl
 	ctx.Fill()
 }
 
-func drawColorWheel(ctx *davinci.Context, x, y, w, h, t float32) {
+func drawColorWheel(ctx *vg.Context, x, y, w, h, t float32) {
 	var r0, r1, ax, ay, bx, by, aeps, r float32
 	hue := sinF(t * 0.12)
 
@@ -700,7 +701,7 @@ func drawColorWheel(ctx *davinci.Context, x, y, w, h, t float32) {
 	defer ctx.Restore()
 	/*      ctx.BeginPath()
 	ctx.Rect(x,y,w,h)
-	ctx.FillColor(davinci.RGBA(255,0,0,128))
+	ctx.FillColor(vg.RGBA(255,0,0,128))
 	ctx.Fill()*/
 
 	cx := x + w*0.5
@@ -714,17 +715,17 @@ func drawColorWheel(ctx *davinci.Context, x, y, w, h, t float32) {
 	aeps = 0.5 / r1 // half a pixel arc length in radians (2pi cancels out).
 
 	for i := 0; i < 6; i++ {
-		a0 := float32(i)/6.0*davinci.PI*2.0 - aeps
-		a1 := float32(i+1.0)/6.0*davinci.PI*2.0 + aeps
+		a0 := float32(i)/6.0*vg.PI*2.0 - aeps
+		a1 := float32(i+1.0)/6.0*vg.PI*2.0 + aeps
 		ctx.BeginPath()
-		ctx.Arc(cx, cy, r0, a0, a1, davinci.Clockwise)
-		ctx.Arc(cx, cy, r1, a1, a0, davinci.CounterClockwise)
+		ctx.Arc(cx, cy, r0, a0, a1, vg.Clockwise)
+		ctx.Arc(cx, cy, r1, a1, a0, vg.CounterClockwise)
 		ctx.ClosePath()
 		ax = cx + cosF(a0)*(r0+r1)*0.5
 		ay = cy + sinF(a0)*(r0+r1)*0.5
 		bx = cx + cosF(a1)*(r0+r1)*0.5
 		by = cy + sinF(a1)*(r0+r1)*0.5
-		paint := davinci.LinearGradient(ax, ay, bx, by, davinci.HSLA(a0/(davinci.PI*2), 1.0, 0.55, 255), davinci.HSLA(a1/(davinci.PI*2), 1.0, 0.55, 255))
+		paint := vg.LinearGradient(ax, ay, bx, by, vg.HSLA(a0/(vg.PI*2), 1.0, 0.55, 255), vg.HSLA(a1/(vg.PI*2), 1.0, 0.55, 255))
 		ctx.SetFillPaint(paint)
 		ctx.Fill()
 	}
@@ -732,72 +733,72 @@ func drawColorWheel(ctx *davinci.Context, x, y, w, h, t float32) {
 	ctx.BeginPath()
 	ctx.Circle(cx, cy, r0-0.5)
 	ctx.Circle(cx, cy, r1+0.5)
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 64))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 64))
 	ctx.SetStrokeWidth(1.0)
 	ctx.Stroke()
 
 	// Selector
 	ctx.Translate(cx, cy)
-	ctx.Rotate(hue * davinci.PI * 2)
+	ctx.Rotate(hue * vg.PI * 2)
 
 	// Marker on
 	ctx.SetStrokeWidth(2.0)
 	ctx.BeginPath()
 	ctx.Rect(r0-1, -3, r1-r0+2, 6)
-	ctx.SetStrokeColor(davinci.RGBA(255, 255, 255, 192))
+	ctx.SetStrokeColor(vg.RGBA(255, 255, 255, 192))
 	ctx.Stroke()
 
-	paint := davinci.BoxGradient(r0-3, -5, r1-r0+6, 10, 2, 4, davinci.RGBA(0, 0, 0, 128), davinci.RGBA(0, 0, 0, 0))
+	paint := vg.BoxGradient(r0-3, -5, r1-r0+6, 10, 2, 4, vg.RGBA(0, 0, 0, 128), vg.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(r0-2-10, -4-10, r1-r0+4+20, 8+20)
 	ctx.Rect(r0-2, -4, r1-r0+4, 8)
-	ctx.PathWinding(davinci.Hole)
+	ctx.PathWinding(vg.Hole)
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
 
 	// Center triangle
 	r = r0 - 6
-	ax = cosF(120.0/180.0*davinci.PI) * r
-	ay = sinF(120.0/180.0*davinci.PI) * r
-	bx = cosF(-120.0/180.0*davinci.PI) * r
-	by = sinF(-120.0/180.0*davinci.PI) * r
+	ax = cosF(120.0/180.0*vg.PI) * r
+	ay = sinF(120.0/180.0*vg.PI) * r
+	bx = cosF(-120.0/180.0*vg.PI) * r
+	by = sinF(-120.0/180.0*vg.PI) * r
 	ctx.BeginPath()
 	ctx.MoveTo(r, 0)
 	ctx.LineTo(ax, ay)
 	ctx.LineTo(bx, by)
 	ctx.ClosePath()
-	paint = davinci.LinearGradient(r, 0, ax, ay, davinci.HSLA(hue, 1.0, 0.5, 255), davinci.RGBA(255, 255, 255, 255))
+	paint = vg.LinearGradient(r, 0, ax, ay, vg.HSLA(hue, 1.0, 0.5, 255), vg.RGBA(255, 255, 255, 255))
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
-	paint = davinci.LinearGradient((r+ax)*0.5, (0+ay)*0.5, bx, by, davinci.RGBA(0, 0, 0, 0), davinci.RGBA(0, 0, 0, 255))
+	paint = vg.LinearGradient((r+ax)*0.5, (0+ay)*0.5, bx, by, vg.RGBA(0, 0, 0, 0), vg.RGBA(0, 0, 0, 255))
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 64))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 64))
 	ctx.Stroke()
 
 	// Select circle on triangle
-	ax = cosF(120.0/180.0*davinci.PI) * r * 0.3
-	ay = sinF(120.0/180.0*davinci.PI) * r * 0.4
+	ax = cosF(120.0/180.0*vg.PI) * r * 0.3
+	ay = sinF(120.0/180.0*vg.PI) * r * 0.4
 	ctx.SetStrokeWidth(2.0)
 	ctx.BeginPath()
 	ctx.Circle(ax, ay, 5)
-	ctx.SetStrokeColor(davinci.RGBA(255, 255, 255, 192))
+	ctx.SetStrokeColor(vg.RGBA(255, 255, 255, 192))
 	ctx.Stroke()
 
-	paint = davinci.RadialGradient(ax, ay, 7, 9, davinci.RGBA(0, 0, 0, 64), davinci.RGBA(0, 0, 0, 0))
+	paint = vg.RadialGradient(ax, ay, 7, 9, vg.RGBA(0, 0, 0, 64), vg.RGBA(0, 0, 0, 0))
 	ctx.BeginPath()
 	ctx.Rect(ax-20, ay-20, 40, 40)
 	ctx.Circle(ax, ay, 7)
-	ctx.PathWinding(davinci.Hole)
+	ctx.PathWinding(vg.Hole)
 	ctx.SetFillPaint(paint)
 	ctx.Fill()
 }
 
-func drawLines(ctx *davinci.Context, x, y, w, h, t float32) {
+func drawLines(ctx *vg.Context, x, y, w, h, t float32) {
 	var pad float32 = 5.0
 	s := w/9.0 - pad*2
-	joins := []davinci.LineCap{davinci.Miter, davinci.Round, davinci.Bevel}
-	caps := []davinci.LineCap{davinci.Butt, davinci.Round, davinci.Square}
+	joins := []vg.LineCap{vg.Miter, vg.Round, vg.Bevel}
+	caps := []vg.LineCap{vg.Butt, vg.Round, vg.Square}
 
 	ctx.Save()
 	defer ctx.Restore()
@@ -821,7 +822,7 @@ func drawLines(ctx *davinci.Context, x, y, w, h, t float32) {
 			ctx.SetLineJoin(join)
 
 			ctx.SetStrokeWidth(s * 0.3)
-			ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 160))
+			ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 160))
 			ctx.BeginPath()
 			ctx.MoveTo(fx+pts[0], fy+pts[1])
 			ctx.LineTo(fx+pts[2], fy+pts[3])
@@ -829,11 +830,11 @@ func drawLines(ctx *davinci.Context, x, y, w, h, t float32) {
 			ctx.LineTo(fx+pts[6], fy+pts[7])
 			ctx.Stroke()
 
-			ctx.SetLineCap(davinci.Butt)
-			ctx.SetLineJoin(davinci.Bevel)
+			ctx.SetLineCap(vg.Butt)
+			ctx.SetLineJoin(vg.Bevel)
 
 			ctx.SetStrokeWidth(1.0)
-			ctx.SetStrokeColor(davinci.RGBA(0, 192, 255, 255))
+			ctx.SetStrokeColor(vg.RGBA(0, 192, 255, 255))
 			ctx.BeginPath()
 			ctx.MoveTo(fx+pts[0], fy+pts[1])
 			ctx.LineTo(fx+pts[2], fy+pts[3])
@@ -845,11 +846,11 @@ func drawLines(ctx *davinci.Context, x, y, w, h, t float32) {
 	}
 }
 
-func drawWidths(ctx *davinci.Context, x, y, width float32) {
+func drawWidths(ctx *vg.Context, x, y, width float32) {
 	ctx.Save()
 	defer ctx.Restore()
 
-	ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 255))
+	ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 255))
 	for i := 0; i < 20; i++ {
 		w := (float32(i) + 0.5) * 0.1
 		ctx.SetStrokeWidth(w)
@@ -861,8 +862,8 @@ func drawWidths(ctx *davinci.Context, x, y, width float32) {
 	}
 }
 
-func drawCaps(ctx *davinci.Context, x, y, width float32) {
-	caps := []davinci.LineCap{davinci.Butt, davinci.Round, davinci.Square}
+func drawCaps(ctx *vg.Context, x, y, width float32) {
+	caps := []vg.LineCap{vg.Butt, vg.Round, vg.Square}
 	var lineWidth float32 = 8.0
 
 	ctx.Save()
@@ -870,19 +871,19 @@ func drawCaps(ctx *davinci.Context, x, y, width float32) {
 
 	ctx.BeginPath()
 	ctx.Rect(x-lineWidth/2, y, width+lineWidth, 40)
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 32))
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 32))
 	ctx.Fill()
 
 	ctx.BeginPath()
 	ctx.Rect(x, y, width, 40)
-	ctx.SetFillColor(davinci.RGBA(255, 255, 255, 32))
+	ctx.SetFillColor(vg.RGBA(255, 255, 255, 32))
 	ctx.Fill()
 
 	ctx.SetStrokeWidth(lineWidth)
 
 	for i, cap := range caps {
 		ctx.SetLineCap(cap)
-		ctx.SetStrokeColor(davinci.RGBA(0, 0, 0, 255))
+		ctx.SetStrokeColor(vg.RGBA(0, 0, 0, 255))
 		ctx.BeginPath()
 		ctx.MoveTo(x, y+float32(i)*10+5)
 		ctx.LineTo(x+width, y+float32(i)*10+5)
@@ -890,7 +891,7 @@ func drawCaps(ctx *davinci.Context, x, y, width float32) {
 	}
 }
 
-func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
+func drawParagraph(ctx *vg.Context, x, y, width, height, mx, my float32) {
 	text := "This is longer chunk of text.\n  \n  Would have used lorem ipsum but she    was busy jumping over the lazy dog with the fox and all the men who came to the aid of the party."
 
 	ctx.Save()
@@ -898,7 +899,7 @@ func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
 
 	ctx.SetFontSize(18.0)
 	ctx.SetFontFace("sans")
-	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignTop)
+	ctx.SetTextAlign(vg.AlignLeft | vg.AlignTop)
 	_, _, lineh := ctx.TextMetrics()
 	// The text break API can be used to fill a large buffer of rows,
 	// or to iterate over the text just few lines (or just one) at a time.
@@ -919,11 +920,11 @@ func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
 		} else {
 			alpha = 16
 		}
-		ctx.SetFillColor(davinci.RGBA(255, 255, 255, alpha))
+		ctx.SetFillColor(vg.RGBA(255, 255, 255, alpha))
 		ctx.Rect(x, y, row.Width, lineh)
 		ctx.Fill()
 
-		ctx.SetFillColor(davinci.RGBA(255, 255, 255, 255))
+		ctx.SetFillColor(vg.RGBA(255, 255, 255, 255))
 		ctx.TextRune(x, y, runes[row.StartIndex:row.EndIndex])
 
 		if hit {
@@ -951,7 +952,7 @@ func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
 				px = gx
 			}
 			ctx.BeginPath()
-			ctx.SetFillColor(davinci.RGBA(255, 192, 0, 255))
+			ctx.SetFillColor(vg.RGBA(255, 192, 0, 255))
 			ctx.Rect(caretX, y, 1, lineh)
 			ctx.Fill()
 
@@ -967,12 +968,12 @@ func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
 		txt := strconv.Itoa(gutter)
 
 		ctx.SetFontSize(13.0)
-		ctx.SetTextAlign(davinci.AlignRight | davinci.AlignMiddle)
+		ctx.SetTextAlign(vg.AlignRight | vg.AlignMiddle)
 
 		_, bounds := ctx.TextBounds(gx, gy, txt)
 
 		ctx.BeginPath()
-		ctx.SetFillColor(davinci.RGBA(255, 192, 0, 255))
+		ctx.SetFillColor(vg.RGBA(255, 192, 0, 255))
 		ctx.RoundedRect(
 			float32(int(bounds[0]-4)),
 			float32(int(bounds[1]-2)),
@@ -981,14 +982,14 @@ func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
 			float32(int(bounds[3]-bounds[1])+4)/2.0-1.0)
 		ctx.Fill()
 
-		ctx.SetFillColor(davinci.RGBA(32, 32, 32, 255))
+		ctx.SetFillColor(vg.RGBA(32, 32, 32, 255))
 		ctx.Text(gx, gy, txt)
 	}
 
 	y += 20.0
 
 	ctx.SetFontSize(13.0)
-	ctx.SetTextAlign(davinci.AlignLeft | davinci.AlignTop)
+	ctx.SetTextAlign(vg.AlignLeft | vg.AlignTop)
 	ctx.SetTextLineHeight(1.2)
 
 	bounds := ctx.TextBoxBounds(x, y, 150, "Hover your mouse over the text to see calculated caret position.")
@@ -1001,7 +1002,7 @@ func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
 	ctx.SetGlobalAlpha(a)
 
 	ctx.BeginPath()
-	ctx.SetFillColor(davinci.RGBA(220, 220, 220, 255))
+	ctx.SetFillColor(vg.RGBA(220, 220, 220, 255))
 	ctx.RoundedRect(bounds[0]-2, bounds[1]-2, float32(int(bounds[2]-bounds[0])+4), float32(int(bounds[3]-bounds[1])+4), 3)
 	px := float32(int((bounds[2] + bounds[0]) / 2))
 	ctx.MoveTo(px, bounds[1]-10)
@@ -1009,19 +1010,19 @@ func drawParagraph(ctx *davinci.Context, x, y, width, height, mx, my float32) {
 	ctx.LineTo(px-7, bounds[1]+1)
 	ctx.Fill()
 
-	ctx.SetFillColor(davinci.RGBA(0, 0, 0, 220))
+	ctx.SetFillColor(vg.RGBA(0, 0, 0, 220))
 	ctx.TextBox(x, y, 150, "Hover your mouse over the text to see calculated caret position.")
 }
 
-func drawScissor(ctx *davinci.Context, x, y, t float32) {
+func drawScissor(ctx *vg.Context, x, y, t float32) {
 	ctx.Save()
 
 	// Draw first rect and set scissor to it's area.
 	ctx.Translate(x, y)
-	ctx.Rotate(davinci.DegToRad(5))
+	ctx.Rotate(vg.DegToRad(5))
 	ctx.BeginPath()
 	ctx.Rect(-20, -20, 60, 40)
-	ctx.SetFillColor(davinci.RGBA(255, 0, 0, 255))
+	ctx.SetFillColor(vg.RGBA(255, 0, 0, 255))
 	ctx.Fill()
 	ctx.Scissor(-20, -20, 60, 40)
 
@@ -1034,7 +1035,7 @@ func drawScissor(ctx *davinci.Context, x, y, t float32) {
 	ctx.ResetScissor()
 	ctx.BeginPath()
 	ctx.Rect(-20, -10, 60, 30)
-	ctx.SetFillColor(davinci.RGBA(255, 128, 0, 64))
+	ctx.SetFillColor(vg.RGBA(255, 128, 0, 64))
 	ctx.Fill()
 	ctx.Restore()
 
@@ -1042,7 +1043,7 @@ func drawScissor(ctx *davinci.Context, x, y, t float32) {
 	ctx.IntersectScissor(-20, -10, 60, 30)
 	ctx.BeginPath()
 	ctx.Rect(-20, -10, 60, 30)
-	ctx.SetFillColor(davinci.RGBA(255, 128, 0, 255))
+	ctx.SetFillColor(vg.RGBA(255, 128, 0, 255))
 	ctx.Fill()
 
 	ctx.Restore()

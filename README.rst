@@ -1,8 +1,9 @@
 DaVinci
 =============
 
+DaVinci may contain vector graphics engine, ui, font utils and maybe more ...
+
 DaVinci is forked from NanoVGo.
-A vector graphics engine inspired by HTML5 Canvas API.
 
 NanoVGo
 ---------------

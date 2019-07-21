@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/goxjs/gl"
 	"github.com/goxjs/glfw"
-	"github.com/jxo/davinci"
 	"github.com/jxo/davinci/perfgraph"
 	"github.com/jxo/davinci/sample/demo"
+	"github.com/jxo/davinci/vg"
 	"log"
 )
 
@@ -42,7 +42,8 @@ func main() {
 	window.SetKeyCallback(key)
 	window.MakeContextCurrent()
 
-	ctx, err := davinci.NewContext(0 /*davinci.AntiAlias | davinci.StencilStrokes | davinci.Debug*/)
+	//ctx, err := vg.NewContext(0 /*vg.AntiAlias | vg.StencilStrokes | vg.Debug*/)
+	ctx, err := vg.NewContext(vg.AntiAlias | vg.StencilStrokes | vg.Debug)
 	defer ctx.Delete()
 
 	if err != nil {
@@ -53,7 +54,7 @@ func main() {
 
 	glfw.SwapInterval(0)
 
-	fps := perfgraph.NewPerfGraph("Frame Time", "sans")
+	fps := perfgraph.NewPerfGraph("Frame Time", "sans", perfgraph.RenderFPS)
 
 	for !window.ShouldClose() {
 		t, _ := fps.UpdateGraph()
@@ -90,7 +91,7 @@ func main() {
 	demoData.FreeData(ctx)
 }
 
-func LoadDemo(ctx *davinci.Context) *demo.DemoData {
+func LoadDemo(ctx *vg.Context) *demo.DemoData {
 	d := &demo.DemoData{}
 	for i := 0; i < 12; i++ {
 		path := fmt.Sprintf("images/image%d.jpg", i+1)
