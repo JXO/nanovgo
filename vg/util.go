@@ -185,7 +185,7 @@ func triArea2(ax, ay, bx, by, cx, cy float32) float32 {
 	return acX*abY - abX*acY
 }
 
-func polyArea(points []nvgPoint, npts int) float32 {
+func polyArea(points []vgPoint, npts int) float32 {
 	var area float32
 	a := &points[0]
 	for i := 2; i < npts; i++ {
@@ -196,7 +196,7 @@ func polyArea(points []nvgPoint, npts int) float32 {
 	return area * 0.5
 }
 
-func polyReverse(points []nvgPoint, npts int) {
+func polyReverse(points []vgPoint, npts int) {
 	i := 0
 	j := npts - 1
 	for i < j {
@@ -211,7 +211,7 @@ func curveDivs(r, arc, tol float32) int {
 	return maxI(2, int(math.Ceil(float64(arc)/da)))
 }
 
-func chooseBevel(bevel bool, p0, p1 *nvgPoint, w float32) (x0, y0, x1, y1 float32) {
+func chooseBevel(bevel bool, p0, p1 *vgPoint, w float32) (x0, y0, x1, y1 float32) {
 	if bevel {
 		x0 = p1.x + p0.dy*w
 		y0 = p1.y - p0.dx*w
@@ -226,13 +226,13 @@ func chooseBevel(bevel bool, p0, p1 *nvgPoint, w float32) (x0, y0, x1, y1 float3
 	return
 }
 
-func roundJoin(dst []nvgVertex, index int, p0, p1 *nvgPoint, lw, rw, lu, ru float32, nCap int, fringe float32) int {
+func roundJoin(dst []vgVertex, index int, p0, p1 *vgPoint, lw, rw, lu, ru float32, nCap int, fringe float32) int {
 	dlx0 := p0.dy
 	dly0 := -p0.dx
 	dlx1 := p1.dy
 	dly1 := -p1.dx
-	isInnerBevel := p1.flags&nvgPrINNERBEVEL != 0
-	if p1.flags&nvgPtLEFT != 0 {
+	isInnerBevel := p1.flags&vgPrINNERBEVEL != 0
+	if p1.flags&vgPtLEFT != 0 {
 		lx0, ly0, lx1, ly1 := chooseBevel(isInnerBevel, p0, p1, lw)
 		a0 := atan2F(-dly0, -dlx0)
 		a1 := atan2F(-dly1, -dlx1)
@@ -284,14 +284,14 @@ func roundJoin(dst []nvgVertex, index int, p0, p1 *nvgPoint, lw, rw, lu, ru floa
 	return index
 }
 
-func bevelJoin(dst []nvgVertex, index int, p0, p1 *nvgPoint, lw, rw, lu, ru, fringe float32) int {
+func bevelJoin(dst []vgVertex, index int, p0, p1 *vgPoint, lw, rw, lu, ru, fringe float32) int {
 	dlx0 := p0.dy
 	dly0 := -p0.dx
 	dlx1 := p1.dy
 	dly1 := -p1.dx
-	isInnerBevel := p1.flags&nvgPrINNERBEVEL != 0
-	isBevel := p1.flags&nvgPtBEVEL != 0
-	if p1.flags&nvgPtLEFT != 0 {
+	isInnerBevel := p1.flags&vgPrINNERBEVEL != 0
+	isBevel := p1.flags&vgPtBEVEL != 0
+	if p1.flags&vgPtLEFT != 0 {
 		lx0, ly0, lx1, ly1 := chooseBevel(isInnerBevel, p0, p1, lw)
 
 		(&dst[index]).set(lx0, ly0, lu, 1)
@@ -361,7 +361,7 @@ func bevelJoin(dst []nvgVertex, index int, p0, p1 *nvgPoint, lw, rw, lu, ru, fri
 	return index
 }
 
-func buttCapStart(dst []nvgVertex, index int, p *nvgPoint, dx, dy, w, d, aa float32) int {
+func buttCapStart(dst []vgVertex, index int, p *vgPoint, dx, dy, w, d, aa float32) int {
 	px := p.x - dx*d
 	py := p.y - dy*d
 	dlx := dy
@@ -373,7 +373,7 @@ func buttCapStart(dst []nvgVertex, index int, p *nvgPoint, dx, dy, w, d, aa floa
 	return index + 4
 }
 
-func buttCapEnd(dst []nvgVertex, index int, p *nvgPoint, dx, dy, w, d, aa float32) int {
+func buttCapEnd(dst []vgVertex, index int, p *vgPoint, dx, dy, w, d, aa float32) int {
 	px := p.x + dx*d
 	py := p.y + dy*d
 	dlx := dy
@@ -385,7 +385,7 @@ func buttCapEnd(dst []nvgVertex, index int, p *nvgPoint, dx, dy, w, d, aa float3
 	return index + 4
 }
 
-func roundCapStart(dst []nvgVertex, index int, p *nvgPoint, dx, dy, w float32, nCap int, aa float32) int {
+func roundCapStart(dst []vgVertex, index int, p *vgPoint, dx, dy, w float32, nCap int, aa float32) int {
 	px := p.x
 	py := p.y
 	dlx := dy
@@ -404,7 +404,7 @@ func roundCapStart(dst []nvgVertex, index int, p *nvgPoint, dx, dy, w float32, n
 	return index + 2
 }
 
-func roundCapEnd(dst []nvgVertex, index int, p *nvgPoint, dx, dy, w float32, nCap int, aa float32) int {
+func roundCapEnd(dst []vgVertex, index int, p *vgPoint, dx, dy, w float32, nCap int, aa float32) int {
 	px := p.x
 	py := p.y
 	dlx := dy

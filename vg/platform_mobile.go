@@ -11,10 +11,13 @@ import (
 type Float float32
 
 var shaderHeader string = `
-#version 100
 #define DAVINCI_GL2 1
 #define UNIFORMARRAY_SIZE 11
 `
+//var shaderHeader = `
+//#define DAVINCI_GL3 1
+//#define USE_UNIFORMBUFFER 1
+//`
 
 func prepareTextureBuffer(data []byte, w, h, bpp int) []byte {
 	return data

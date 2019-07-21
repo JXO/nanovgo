@@ -1,47 +1,47 @@
 package vg
 
 const (
-	nvgInitFontImageSize = 512
-	nvgMaxFontImageSize  = 2048
-	nvgMaxFontImages     = 4
+	vgInitFontImageSize = 512
+	vgMaxFontImageSize  = 2048
+	vgMaxFontImages     = 4
 
-	nvgInitCommandsSize = 256
-	nvgInitPointsSize   = 128
-	nvgInitPathsSize    = 16
-	nvgInitVertsSize    = 256
-	nvgMaxStates        = 32
+	vgInitCommandsSize = 256
+	vgInitPointsSize   = 128
+	vgInitPathsSize    = 16
+	vgInitVertsSize    = 256
+	vgMaxStates        = 32
 )
 
-type nvgCommands int
+type vgCommands int
 
 const (
-	nvgMOVETO nvgCommands = iota
-	nvgLINETO
-	nvgBEZIERTO
-	nvgCLOSE
-	nvgWINDING
+	vgMOVETO vgCommands = iota
+	vgLINETO
+	vgBEZIERTO
+	vgCLOSE
+	vgWINDING
 )
 
-type nvgPointFlags int
+type vgPointFlags int
 
 const (
-	nvgPtCORNER     nvgPointFlags = 0x01
-	nvgPtLEFT       nvgPointFlags = 0x02
-	nvgPtBEVEL      nvgPointFlags = 0x04
-	nvgPrINNERBEVEL nvgPointFlags = 0x08
+	vgPtCORNER     vgPointFlags = 0x01
+	vgPtLEFT       vgPointFlags = 0x02
+	vgPtBEVEL      vgPointFlags = 0x04
+	vgPrINNERBEVEL vgPointFlags = 0x08
 )
 
-type nvgTextureType int
+type vgTextureType int
 
 const (
-	nvgTextureALPHA nvgTextureType = 1
-	nvgTextureRGBA  nvgTextureType = 2
+	vgTextureALPHA vgTextureType = 1
+	vgTextureRGBA  vgTextureType = 2
 )
 
-type nvgCodePointSize int
+type vgCodePointSize int
 
 const (
-	nvgNEWLINE nvgCodePointSize = iota
-	nvgSPACE
-	nvgCHAR
+	vgNEWLINE vgCodePointSize = iota
+	vgSPACE
+	vgCHAR
 )

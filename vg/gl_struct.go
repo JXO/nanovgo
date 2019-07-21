@@ -11,19 +11,19 @@ const (
 	nsvgShaderIMG
 )
 
-type glnvgCallType int
+type glvgCallType int
 
 const (
-	glnvgNONE glnvgCallType = iota
-	glnvgFILL
-	glnvgCONVEXFILL
-	glnvgSTROKE
-	glnvgTRIANGLES
-	glnvgTRIANGLESTRIP
+	glvgNONE glvgCallType = iota
+	glvgFILL
+	glvgCONVEXFILL
+	glvgSTROKE
+	glvgTRIANGLES
+	glvgTRIANGLESTRIP
 )
 
 type glCall struct {
-	callType       glnvgCallType
+	callType       glvgCallType
 	image          int
 	pathOffset     int
 	pathCount      int
@@ -111,6 +111,6 @@ type glTexture struct {
 	id            int
 	tex           gl.Texture
 	width, height int
-	texType       nvgTextureType
+	texType       vgTextureType
 	flags         ImageFlags
 }

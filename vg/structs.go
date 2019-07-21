@@ -4,59 +4,59 @@ import (
 	"github.com/jxo/davinci/font"
 )
 
-type nvgParams interface {
+type vgParams interface {
 	edgeAntiAlias() bool
 	renderCreate() error
-	renderCreateTexture(texType nvgTextureType, w, h int, flags ImageFlags, data []byte) int
+	renderCreateTexture(texType vgTextureType, w, h int, flags ImageFlags, data []byte) int
 	renderDeleteTexture(image int) error
 	renderUpdateTexture(image, x, y, w, h int, data []byte) error
 	renderGetTextureSize(image int) (int, int, error)
 	renderViewport(width, height int)
 	renderCancel()
 	renderFlush()
-	renderFill(paint *Paint, scissor *nvgScissor, fringe float32, bounds [4]float32, paths []nvgPath)
-	renderStroke(paint *Paint, scissor *nvgScissor, fringe float32, strokeWidth float32, paths []nvgPath)
-	renderTriangles(paint *Paint, scissor *nvgScissor, vertexes []nvgVertex)
-	renderTriangleStrip(paint *Paint, scissor *nvgScissor, vertexes []nvgVertex)
+	renderFill(paint *Paint, scissor *vgScissor, fringe float32, bounds [4]float32, paths []vgPath)
+	renderStroke(paint *Paint, scissor *vgScissor, fringe float32, strokeWidth float32, paths []vgPath)
+	renderTriangles(paint *Paint, scissor *vgScissor, vertexes []vgVertex)
+	renderTriangleStrip(paint *Paint, scissor *vgScissor, vertexes []vgVertex)
 	renderDelete()
 }
 
-type nvgPoint struct {
+type vgPoint struct {
 	x, y     float32
 	dx, dy   float32
 	len      float32
 	dmx, dmy float32
-	flags    nvgPointFlags
+	flags    vgPointFlags
 }
 
-type nvgVertex struct {
+type vgVertex struct {
 	x, y, u, v float32
 }
 
-func (vtx *nvgVertex) set(x, y, u, v float32) {
+func (vtx *vgVertex) set(x, y, u, v float32) {
 	vtx.x = x
 	vtx.y = y
 	vtx.u = u
 	vtx.v = v
 }
 
-type nvgPath struct {
+type vgPath struct {
 	first   int
 	count   int
 	closed  bool
 	nBevel  int
-	fills   []nvgVertex
-	strokes []nvgVertex
+	fills   []vgVertex
+	strokes []vgVertex
 	winding Winding
 	convex  bool
 }
 
-type nvgScissor struct {
+type vgScissor struct {
 	xform  TransformMatrix
 	extent [2]float32
 }
 
-type nvgState struct {
+type vgState struct {
 	fill, stroke  Paint
 	strokeWidth   float32
 	miterLimit    float32
@@ -64,7 +64,7 @@ type nvgState struct {
 	lineCap       LineCap
 	alpha         float32
 	xform         TransformMatrix
-	scissor       nvgScissor
+	scissor       vgScissor
 	fontSize      float32
 	letterSpacing float32
 	lineHeight    float32
@@ -73,7 +73,7 @@ type nvgState struct {
 	fontID        int
 }
 
-func (s *nvgState) reset() {
+func (s *vgState) reset() {
 	s.fill.setPaintColor(RGBA(255, 255, 255, 255))
 	s.stroke.setPaintColor(RGBA(0, 0, 0, 255))
 	s.strokeWidth = 1.0
@@ -96,48 +96,48 @@ func (s *nvgState) reset() {
 	s.fontID = font.INVALID
 }
 
-func (s *nvgState) getFontScale() float32 {
+func (s *vgState) getFontScale() float32 {
 	return minF(quantize(s.xform.getAverageScale(), 0.01), 4.0)
 }
 
-type nvgPathCache struct {
-	points   []nvgPoint
-	paths    []nvgPath
-	vertexes []nvgVertex
+type vgPathCache struct {
+	points   []vgPoint
+	paths    []vgPath
+	vertexes []vgVertex
 	bounds   [4]float32
 }
 
-func (c *nvgPathCache) allocVertexes(n int) []nvgVertex {
+func (c *vgPathCache) allocVertexes(n int) []vgVertex {
 	offset := len(c.vertexes)
-	c.vertexes = append(c.vertexes, make([]nvgVertex, n)...)
+	c.vertexes = append(c.vertexes, make([]vgVertex, n)...)
 	return c.vertexes[offset:]
 }
 
-func (c *nvgPathCache) clearPathCache() {
+func (c *vgPathCache) clearPathCache() {
 	c.points = c.points[:0]
 	c.paths = c.paths[:0]
 	c.vertexes = c.vertexes[:0]
 }
 
-func (c *nvgPathCache) lastPath() *nvgPath {
+func (c *vgPathCache) lastPath() *vgPath {
 	if len(c.paths) > 0 {
 		return &c.paths[len(c.paths)-1]
 	}
 	return nil
 }
 
-func (c *nvgPathCache) addPath() {
-	c.paths = append(c.paths, nvgPath{first: len(c.points), winding: Solid})
+func (c *vgPathCache) addPath() {
+	c.paths = append(c.paths, vgPath{first: len(c.points), winding: Solid})
 }
 
-func (c *nvgPathCache) lastPoint() *nvgPoint {
+func (c *vgPathCache) lastPoint() *vgPoint {
 	if len(c.points) > 0 {
 		return &c.points[len(c.points)-1]
 	}
 	return nil
 }
 
-func (c *nvgPathCache) addPoint(x, y float32, flags nvgPointFlags, distTol float32) {
+func (c *vgPathCache) addPoint(x, y float32, flags vgPointFlags, distTol float32) {
 	path := c.lastPath()
 
 	if path.count > 0 && len(c.points) > 0 {
@@ -148,7 +148,7 @@ func (c *nvgPathCache) addPoint(x, y float32, flags nvgPointFlags, distTol float
 		}
 	}
 
-	c.points = append(c.points, nvgPoint{
+	c.points = append(c.points, vgPoint{
 		x:     x,
 		y:     y,
 		dx:    0,
@@ -161,21 +161,21 @@ func (c *nvgPathCache) addPoint(x, y float32, flags nvgPointFlags, distTol float
 	path.count++
 }
 
-func (c *nvgPathCache) closePath() {
+func (c *vgPathCache) closePath() {
 	path := c.lastPath()
 	if path != nil {
 		path.closed = true
 	}
 }
 
-func (c *nvgPathCache) pathWinding(winding Winding) {
+func (c *vgPathCache) pathWinding(winding Winding) {
 	path := c.lastPath()
 	if path != nil {
 		path.winding = winding
 	}
 }
 
-func (c *nvgPathCache) tesselateBezier(x1, y1, x2, y2, x3, y3, x4, y4 float32, level int, flags nvgPointFlags, tessTol, distTol float32) {
+func (c *vgPathCache) tesselateBezier(x1, y1, x2, y2, x3, y3, x4, y4 float32, level int, flags vgPointFlags, tessTol, distTol float32) {
 	if level > 10 {
 		return
 	}
@@ -205,7 +205,7 @@ func (c *nvgPathCache) tesselateBezier(x1, y1, x2, y2, x3, y3, x4, y4 float32, l
 	c.tesselateBezier(x1234, y1234, x234, y234, x34, y34, x4, y4, level+1, flags, tessTol, distTol)
 }
 
-func (c *nvgPathCache) calculateJoins(w float32, lineJoin LineCap, miterLimit float32) {
+func (c *vgPathCache) calculateJoins(w float32, lineJoin LineCap, miterLimit float32) {
 	var iw float32
 	if w > 0.0 {
 		iw = 1.0 / w
@@ -237,8 +237,8 @@ func (c *nvgPathCache) calculateJoins(w float32, lineJoin LineCap, miterLimit fl
 			}
 
 			// Clear flags, but keep the corner.
-			if p1.flags&nvgPtCORNER != 0 {
-				p1.flags = nvgPtCORNER
+			if p1.flags&vgPtCORNER != 0 {
+				p1.flags = vgPtCORNER
 			} else {
 				p1.flags = 0
 			}
@@ -247,23 +247,23 @@ func (c *nvgPathCache) calculateJoins(w float32, lineJoin LineCap, miterLimit fl
 			cross := p1.dx*p0.dy - p0.dx*p1.dy
 			if cross > 0.0 {
 				nLeft++
-				p1.flags |= nvgPtLEFT
+				p1.flags |= vgPtLEFT
 			}
 
 			// Calculate if we should use bevel or miter for inner join.
 			limit := maxF(1.0, minF(p0.len, p1.len)*iw)
 			if dmr2*limit*limit < 1.0 {
-				p1.flags |= nvgPrINNERBEVEL
+				p1.flags |= vgPrINNERBEVEL
 			}
 
 			// Check to see if the corner needs to be beveled.
-			if p1.flags&nvgPtCORNER != 0 {
+			if p1.flags&vgPtCORNER != 0 {
 				if dmr2*miterLimit*miterLimit < 1.0 || lineJoin == Bevel || lineJoin == Round {
-					p1.flags |= nvgPtBEVEL
+					p1.flags |= vgPtBEVEL
 				}
 			}
 
-			if p1.flags&(nvgPtBEVEL|nvgPrINNERBEVEL) != 0 {
+			if p1.flags&(vgPtBEVEL|vgPrINNERBEVEL) != 0 {
 				path.nBevel++
 			}
 
@@ -277,7 +277,7 @@ func (c *nvgPathCache) calculateJoins(w float32, lineJoin LineCap, miterLimit fl
 	}
 }
 
-func (c *nvgPathCache) expandStroke(w float32, lineCap, lineJoin LineCap, miterLimit, fringeWidth, tessTol float32) {
+func (c *vgPathCache) expandStroke(w float32, lineCap, lineJoin LineCap, miterLimit, fringeWidth, tessTol float32) {
 	aa := fringeWidth
 	// Calculate divisions per half circle.
 	nCap := curveDivs(w, PI, tessTol)
@@ -312,7 +312,7 @@ func (c *nvgPathCache) expandStroke(w float32, lineCap, lineJoin LineCap, miterL
 
 		// Calculate fringe or stroke
 		index := 0
-		var p0, p1 *nvgPoint
+		var p0, p1 *vgPoint
 		var s, e, p1Index int
 
 		if path.closed {
@@ -344,7 +344,7 @@ func (c *nvgPathCache) expandStroke(w float32, lineCap, lineJoin LineCap, miterL
 		}
 
 		for j := s; j < e; j++ {
-			if p1.flags&(nvgPtBEVEL|nvgPrINNERBEVEL) != 0 {
+			if p1.flags&(vgPtBEVEL|vgPrINNERBEVEL) != 0 {
 				if lineJoin == Round {
 					index = roundJoin(dst, index, p0, p1, w, w, 0, 1, nCap, aa)
 				} else {
@@ -385,7 +385,7 @@ func (c *nvgPathCache) expandStroke(w float32, lineCap, lineJoin LineCap, miterL
 	}
 }
 
-func (c *nvgPathCache) expandFill(w float32, lineJoin LineCap, miterLimit, fringeWidth float32) {
+func (c *vgPathCache) expandFill(w float32, lineJoin LineCap, miterLimit, fringeWidth float32) {
 	aa := fringeWidth
 	fringe := w > 0.0
 
@@ -417,12 +417,12 @@ func (c *nvgPathCache) expandFill(w float32, lineJoin LineCap, miterLimit, fring
 			p1 := &points[0]
 			p1Index := 0
 			for j := 0; j < path.count; j++ {
-				if p1.flags&nvgPtBEVEL != 0 {
+				if p1.flags&vgPtBEVEL != 0 {
 					dlx0 := p0.dy
 					dly0 := -p0.dx
 					dlx1 := p1.dy
 					dly1 := -p1.dx
-					if p1.flags&nvgPtLEFT != 0 {
+					if p1.flags&vgPtLEFT != 0 {
 						lx := p1.x + p1.dmx*wOff
 						ly := p1.y + p1.dmy*wOff
 						(&dst[index]).set(lx, ly, 0.5, 1)
@@ -479,7 +479,7 @@ func (c *nvgPathCache) expandFill(w float32, lineJoin LineCap, miterLimit, fring
 
 			// Looping
 			for j := 0; j < path.count; j++ {
-				if p1.flags&(nvgPtBEVEL|nvgPrINNERBEVEL) != 0 {
+				if p1.flags&(vgPtBEVEL|vgPrINNERBEVEL) != 0 {
 					index = bevelJoin(dst, index, p0, p1, lw, rw, lu, ru, fringeWidth)
 				} else {
 					(&dst[index]).set(p1.x+(p1.dmx*lw), p1.y+(p1.dmy*lw), lu, 1)

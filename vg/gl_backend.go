@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	glnvgLocVIEWSIZE = iota
-	glnvgLocTEX
-	glnvgLocFRAG
-	glnvgMaxLOCS
+	glvgLocVIEWSIZE = iota
+	glvgLocTEX
+	glvgLocFRAG
+	glvgMaxLOCS
 )
 
 // NewContext makes new DaVinci context that is entry point of this API
@@ -29,7 +29,7 @@ type glShader struct {
 	program      gl.Program
 	fragment     gl.Shader
 	vertex       gl.Shader
-	locations    [glnvgMaxLOCS]gl.Uniform
+	locations    [glvgMaxLOCS]gl.Uniform
 	vertexAttrib gl.Attrib
 	tcoordAttrib gl.Attrib
 }
@@ -85,13 +85,13 @@ func (s *glShader) deleteShader() {
 }
 
 func (s *glShader) getUniforms() {
-	s.locations[glnvgLocVIEWSIZE] = gl.GetUniformLocation(s.program, "viewSize")
-	s.locations[glnvgLocTEX] = gl.GetUniformLocation(s.program, "tex")
-	s.locations[glnvgLocFRAG] = gl.GetUniformLocation(s.program, "frag")
+	s.locations[glvgLocVIEWSIZE] = gl.GetUniformLocation(s.program, "viewSize")
+	s.locations[glvgLocTEX] = gl.GetUniformLocation(s.program, "tex")
+	s.locations[glvgLocFRAG] = gl.GetUniformLocation(s.program, "frag")
 }
 
 const (
-	glnvgGLUniformArraySize = 11
+	glvgGLUniformArraySize = 11
 )
 
 const (
@@ -205,7 +205,7 @@ func (c *glContext) allocTexture() *glTexture {
 	return tex
 }
 
-func (c *glContext) convertPaint(frag *glFragUniforms, paint *Paint, scissor *nvgScissor, width, fringe, strokeThr float32) error {
+func (c *glContext) convertPaint(frag *glFragUniforms, paint *Paint, scissor *vgScissor, width, fringe, strokeThr float32) error {
 	frag.setInnerColor(paint.innerColor.PreMultiply())
 	frag.setOuterColor(paint.outerColor.PreMultiply())
 
@@ -237,7 +237,7 @@ func (c *glContext) convertPaint(frag *glFragUniforms, paint *Paint, scissor *nv
 		}
 		frag.setType(nsvgShaderFILLIMG)
 
-		if tex.texType == nvgTextureRGBA {
+		if tex.texType == vgTextureRGBA {
 			if tex.flags&ImagePreMultiplied != 0 {
 				frag.setTexType(0)
 			} else {
@@ -258,7 +258,7 @@ func (c *glContext) convertPaint(frag *glFragUniforms, paint *Paint, scissor *nv
 
 func (c *glContext) setUniforms(uniformOffset, image int) {
 	frag := c.uniforms[uniformOffset]
-	gl.Uniform4fv(c.shader.locations[glnvgLocFRAG], frag[:])
+	gl.Uniform4fv(c.shader.locations[glvgLocFRAG], frag[:])
 
 	if image != 0 {
 		c.bindTexture(&c.findTexture(image).tex)
@@ -428,7 +428,7 @@ func (p *glParams) renderCreate() error {
 	return nil
 }
 
-func (p *glParams) renderCreateTexture(texType nvgTextureType, w, h int, flags ImageFlags, data []byte) int {
+func (p *glParams) renderCreateTexture(texType vgTextureType, w, h int, flags ImageFlags, data []byte) int {
 	if nearestPow2(w) != w || nearestPow2(h) != h {
 		if (flags&ImageRepeatX) != 0 || (flags&ImageRepeatY) != 0 {
 			dumpLog("Repeat X/Y is not supported for non power-of-two textures (%d x %d)\n", w, h)
@@ -449,7 +449,7 @@ func (p *glParams) renderCreateTexture(texType nvgTextureType, w, h int, flags I
 	p.context.bindTexture(&tex.tex)
 	gl.PixelStorei(gl.UNPACK_ALIGNMENT, 1)
 
-	if texType == nvgTextureRGBA {
+	if texType == vgTextureRGBA {
 		data = prepareTextureBuffer(data, w, h, 4)
 		gl.TexImage2D(gl.TEXTURE_2D, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, data)
 	} else {
@@ -507,7 +507,7 @@ func (p *glParams) renderUpdateTexture(image, x, y, w, h int, data []byte) error
 	p.context.bindTexture(&tex.tex)
 	gl.PixelStorei(gl.UNPACK_ALIGNMENT, 1)
 
-	if tex.texType == nvgTextureRGBA {
+	if tex.texType == vgTextureRGBA {
 		data = data[y*tex.width*4:]
 	} else {
 		data = data[y*tex.width:]
@@ -515,7 +515,7 @@ func (p *glParams) renderUpdateTexture(image, x, y, w, h int, data []byte) error
 	x = 0
 	w = tex.width
 
-	if tex.texType == nvgTextureRGBA {
+	if tex.texType == vgTextureRGBA {
 		gl.TexSubImage2D(gl.TEXTURE_2D, 0, x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, data)
 	} else {
 		gl.TexSubImage2D(gl.TEXTURE_2D, 0, x, y, w, h, gl.LUMINANCE, gl.UNSIGNED_BYTE, data)
@@ -583,21 +583,21 @@ func (p *glParams) renderFlush() {
 		gl.VertexAttribPointer(c.shader.tcoordAttrib, 2, gl.FLOAT, false, 4*4, 8)
 
 		// Set view and texture just once per frame.
-		gl.Uniform1i(c.shader.locations[glnvgLocTEX], 0)
-		gl.Uniform2fv(c.shader.locations[glnvgLocVIEWSIZE], c.view[:])
+		gl.Uniform1i(c.shader.locations[glvgLocTEX], 0)
+		gl.Uniform2fv(c.shader.locations[glvgLocVIEWSIZE], c.view[:])
 
 		for i := range c.calls {
 			call := &c.calls[i]
 			switch call.callType {
-			case glnvgFILL:
+			case glvgFILL:
 				c.fill(call)
-			case glnvgCONVEXFILL:
+			case glvgCONVEXFILL:
 				c.convexFill(call)
-			case glnvgSTROKE:
+			case glvgSTROKE:
 				c.stroke(call)
-			case glnvgTRIANGLES:
+			case glvgTRIANGLES:
 				c.triangles(call)
-			case glnvgTRIANGLESTRIP:
+			case glvgTRIANGLESTRIP:
 				c.triangleStrip(call)
 			}
 		}
@@ -614,7 +614,7 @@ func (p *glParams) renderFlush() {
 	c.uniforms = c.uniforms[:0]
 }
 
-func (p *glParams) renderFill(paint *Paint, scissor *nvgScissor, fringe float32, bounds [4]float32, paths []nvgPath) {
+func (p *glParams) renderFill(paint *Paint, scissor *vgScissor, fringe float32, bounds [4]float32, paths []vgPath) {
 	c := p.context
 	var glPaths []glPath
 	c.calls = append(c.calls, glCall{
@@ -625,9 +625,9 @@ func (p *glParams) renderFill(paint *Paint, scissor *nvgScissor, fringe float32,
 	glPaths, call.pathOffset = c.allocPath(call.pathCount)
 
 	if len(paths) == 0 && paths[0].convex {
-		call.callType = glnvgCONVEXFILL
+		call.callType = glvgCONVEXFILL
 	} else {
-		call.callType = glnvgFILL
+		call.callType = glvgFILL
 	}
 
 	// Allocate vertices for all the paths
@@ -712,7 +712,7 @@ func (p *glParams) renderFill(paint *Paint, scissor *nvgScissor, fringe float32,
 
 	// Setup uniforms for draw calls
 	var paintFrag *glFragUniforms
-	if call.callType == glnvgFILL {
+	if call.callType == glvgFILL {
 		var uniforms []glFragUniforms
 		uniforms, call.uniformOffset = c.allocFragUniforms(2)
 		// Simple shader for stencil
@@ -731,12 +731,12 @@ func (p *glParams) renderFill(paint *Paint, scissor *nvgScissor, fringe float32,
 	c.convertPaint(paintFrag, paint, scissor, fringe, fringe, -1.0)
 }
 
-func (p *glParams) renderStroke(paint *Paint, scissor *nvgScissor, fringe float32, strokeWidth float32, paths []nvgPath) {
+func (p *glParams) renderStroke(paint *Paint, scissor *vgScissor, fringe float32, strokeWidth float32, paths []vgPath) {
 	c := p.context
 	var glPaths []glPath
 	p.context.calls = append(c.calls, glCall{})
 	call := &c.calls[len(c.calls)-1]
-	call.callType = glnvgSTROKE
+	call.callType = glvgSTROKE
 	glPaths, call.pathOffset = c.allocPath(len(paths))
 	call.pathCount = len(paths)
 	call.image = paint.image
@@ -785,7 +785,7 @@ func (p *glParams) renderStroke(paint *Paint, scissor *nvgScissor, fringe float3
 	}
 }
 
-func (p *glParams) renderTriangles(paint *Paint, scissor *nvgScissor, vertexes []nvgVertex) {
+func (p *glParams) renderTriangles(paint *Paint, scissor *vgScissor, vertexes []vgVertex) {
 	c := p.context
 
 	vertexCount := len(vertexes)
@@ -793,7 +793,7 @@ func (p *glParams) renderTriangles(paint *Paint, scissor *nvgScissor, vertexes [
 	callIndex := len(c.calls)
 
 	c.calls = append(c.calls, glCall{
-		callType:       glnvgTRIANGLES,
+		callType:       glvgTRIANGLES,
 		image:          paint.image,
 		triangleOffset: vertexOffset / 4,
 		triangleCount:  vertexCount,
@@ -818,7 +818,7 @@ func (p *glParams) renderTriangles(paint *Paint, scissor *nvgScissor, vertexes [
 	f0.setType(nsvgShaderIMG)
 }
 
-func (p *glParams) renderTriangleStrip(paint *Paint, scissor *nvgScissor, vertexes []nvgVertex) {
+func (p *glParams) renderTriangleStrip(paint *Paint, scissor *vgScissor, vertexes []vgVertex) {
 	c := p.context
 
 	vertexCount := len(vertexes)
@@ -826,7 +826,7 @@ func (p *glParams) renderTriangleStrip(paint *Paint, scissor *nvgScissor, vertex
 	callIndex := len(c.calls)
 
 	c.calls = append(c.calls, glCall{
-		callType:       glnvgTRIANGLESTRIP,
+		callType:       glvgTRIANGLESTRIP,
 		image:          paint.image,
 		triangleOffset: vertexOffset / 4,
 		triangleCount:  vertexCount,
@@ -889,7 +889,7 @@ func checkError(p *glContext, str string) {
 	}
 }
 
-func maxVertexCount(paths []nvgPath) int {
+func maxVertexCount(paths []vgPath) int {
 	count := 0
 	for i := range paths {
 		path := &paths[i]
