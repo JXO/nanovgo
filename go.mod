@@ -9,3 +9,5 @@ require (
 	honnef.co/go/js/console v0.0.0-20150119023344-105276c43558
 	honnef.co/go/js/dom v0.0.0-20190526011328-ebc4cf92d81f // indirect
 )
+
+go 1.13
