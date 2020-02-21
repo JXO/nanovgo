@@ -10,11 +10,13 @@ import (
 	"os"
 )
 
-// Context is an entry point object to use DaVinci API and created by NewContext() function.
+// DaVinci Vector Graphics
+
+// Context is an entry point object to use DaVinci VG API and created by NewContext() function.
 //
 // State Handling
 //
-// DaVinci contains state which represents how paths will be rendered.
+// DaVinci VG contains state which represents how paths will be rendered.
 // The state contains transform, fill and stroke styles, text and font styles,
 // and scissor clipping.
 //
@@ -44,8 +46,8 @@ import (
 //
 // Images
 //
-// DaVinci allows you to load jpg, png, psd, tga, pic and gif files to be used for rendering.
-// In addition you can upload your own image. The image loading is provided by stb_image.
+// DaVinci VG allows you to load jpg, png, psd, tga, pic, gif and svg files to be used for rendering.
+// jpg, png are now supported, psd, tag, pic, gif, svg will be added later.
 // The parameter imageFlags is combination of flags defined in ImageFlags.
 //
 // Paints
@@ -61,11 +63,11 @@ import (
 // Paths
 //
 // Drawing a new shape starts with BeginPath(), it clears all the currently defined paths.
-// Then you define one or more paths and sub-paths which describe the shape. The are functions
+// Then you define one or more paths and sub-paths which describe the shape. There are functions
 // to draw common shapes like rectangles and circles, and lower level step-by-step functions,
 // which allow to define a path curve by curve.
 //
-// DaVinci uses even-odd fill rule to draw the shapes. Solid shapes should have counter clockwise
+// DaVinci VG uses even-odd fill rule to draw the shapes. Solid shapes should have counter clockwise
 // winding and holes should have counter clockwise order. To specify winding of a path you can
 // call PathWinding(). This is useful especially for the common shapes, which are drawn CCW.
 //
@@ -76,7 +78,7 @@ import (
 //
 // Text
 //
-// DaVinci allows you to load .ttf files and use the font to render text.
+// DaVinci VG allows you to load .ttf or .ttc files and use the font to render text.
 //
 // The appearance of the text can be defined by setting the current text style
 // and by specifying the fill color. Common text and font settings such as
@@ -124,7 +126,7 @@ type Context struct {
 	textTriCount   int
 }
 
-// Delete is called when tearing down DaVinci context
+// Delete is called when tearing down DaVinci VG context
 func (c *Context) Delete() {
 
 	for i, fontImage := range c.fontImages {
@@ -137,7 +139,7 @@ func (c *Context) Delete() {
 }
 
 // BeginFrame begins drawing a new frame
-// Calls to DaVinci drawing API should be wrapped in Context.BeginFrame() & Context.EndFrame()
+// Calls to DaVinci VG drawing API should be wrapped in Context.BeginFrame() & Context.EndFrame()
 // Context.BeginFrame() defines the size of the window to render to in relation currently
 // set viewport (i.e. glViewport on GL backends). Device pixel ration allows to
 // control the rendering on Hi-DPI devices.
@@ -930,8 +932,10 @@ func (c *Context) TextRune(x, y float32, runes []rune) float32 {
 	return iter.X
 }
 
-// TextBox draws multi-line text string at specified location wrapped at the specified width. If end is specified only the sub-string up to the end is drawn.
-// White space is stripped at the beginning of the rows, the text is split at word boundaries or when new-line characters are encountered.
+// TextBox draws multi-line text string at specified location wrapped at the specified width.
+// If end is specified only the sub-string up to the end is drawn.
+// White space is stripped at the beginning of the rows,
+// the text is split at word boundaries or when new-line characters are encountered.
 // Words longer than the max width are slit at nearest character (i.e. no hyphenation).
 // Draws text string at specified location. If end is specified only the sub-string up to the end is drawn.
 func (c *Context) TextBox(x, y, breakRowWidth float32, str string) {
@@ -1068,7 +1072,8 @@ func (c *Context) TextBoxBounds(x, y, breakRowWidth float32, str string) [4]floa
 	return [4]float32{minX, minY, maxX, maxY}
 }
 
-// TextGlyphPositions calculates the glyph x positions of the specified text. If end is specified only the sub-string will be used.
+// TextGlyphPositions calculates the glyph x positions of the specified text.
+// If end is specified only the sub-string will be used.
 // Measured values are returned in local coordinate space.
 func (c *Context) TextGlyphPositions(x, y float32, str string) []GlyphPosition {
 	return c.TextGlyphPositionsRune(x, y, []rune(str))
@@ -1135,8 +1140,10 @@ func (c *Context) TextMetrics() (float32, float32, float32) {
 	return ascender * invScale, descender * invScale, lineH * invScale
 }
 
-// TextBreakLines breaks the specified text into lines. If end is specified only the sub-string will be used.
-// White space is stripped at the beginning of the rows, the text is split at word boundaries or when new-line characters are encountered.
+// TextBreakLines breaks the specified text into lines.
+// If end is specified only the sub-string will be used.
+// White space is stripped at the beginning of the rows,
+// the text is split at word boundaries or when new-line characters are encountered.
 // Words longer than the max width are slit at nearest character (i.e. no hyphenation).
 func (c *Context) TextBreakLines(str string, breakRowWidth float32) []TextRow {
 	return c.TextBreakLinesRune([]rune(str), breakRowWidth)
