@@ -32,8 +32,8 @@ func NewComboBox(parent Widget, items ...[]string) *ComboBox {
 	combobox.chevronIcon = IconRightOpen
 	combobox.SetIconPosition(ButtonIconLeftCentered)
 	combobox.SetFlags(ToggleButtonType | PopupButtonType)
-	parentWindow := parent.FindWindow()
-	combobox.popup = NewPopup(parentWindow.Parent(), parentWindow)
+	parentPanel := parent.FindPanel()
+	combobox.popup = NewPopup(parentPanel.Parent(), parentPanel)
 	combobox.popup.SetSize(320, 250)
 	InitWidget(combobox, parent)
 	combobox.SetItems(itemsParam, shortItemsParam)

@@ -18,7 +18,7 @@ type Application struct {
 }
 
 func (a *Application) init() {
-	glfw.WindowHint(glfw.Samples, 4)
+	glfw.PanelHint(glfw.Samples, 4)
 	a.screen = ui.NewScreen(1024, 768, "DavinciUI Test", true, false)
 
 	demo.ButtonDemo(a.screen)
@@ -38,7 +38,7 @@ func (a *Application) init() {
 	a.screen.PerformLayout()
 
 	/* All NanoGUI widgets are initialized at this point. Now
-	create an OpenGL shader to draw the main window contents.
+	create an OpenGL shader to draw the main panel contents.
 
 	NanoGUI comes with a simple Eigen-based wrapper around OpenGL 3,
 	which eliminates most of the tedious and error-prone shader and

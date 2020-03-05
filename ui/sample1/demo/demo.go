@@ -8,40 +8,40 @@ import (
 	"strconv"
 )
 
-func ButtonDemo(screen *ui.Screen) {
-	window := ui.NewWindow(screen, "Button demo")
-	window.SetPosition(15, 15)
-	window.SetLayout(ui.NewGroupLayout())
+func ButtonDemo(win *ui.Window) {
+	panel := ui.NewPanel(win, "Button demo")
+	panel.SetPosition(15, 15)
+	panel.SetLayout(ui.NewGroupLayout())
 
-	ui.NewLabel(window, "Push buttons").SetFont("sans-bold")
+	ui.NewLabel(panel, "Push buttons").SetFont("sans-bold")
 
-	b1 := ui.NewButton(window, "Plain button")
+	b1 := ui.NewButton(panel, "Plain button")
 	b1.SetCallback(func() {
 		fmt.Println("pushed!")
 	})
 
-	b2 := ui.NewButton(window, "Styled")
+	b2 := ui.NewButton(panel, "Styled")
 	b2.SetBackgroundColor(vg.RGBA(0, 0, 255, 25))
 	b2.SetIcon(ui.IconRocket)
 	b2.SetCallback(func() {
 		fmt.Println("pushed!")
 	})
 
-	ui.NewLabel(window, "Toggle button").SetFont("sans-bold")
-	b3 := ui.NewButton(window, "Toggle me")
+	ui.NewLabel(panel, "Toggle button").SetFont("sans-bold")
+	b3 := ui.NewButton(panel, "Toggle me")
 	b3.SetFlags(ui.ToggleButtonType)
 	b3.SetChangeCallback(func(state bool) {
 		fmt.Println("Toggle button state:", state)
 	})
 
-	ui.NewLabel(window, "Radio buttons").SetFont("sans-bold")
-	b4 := ui.NewButton(window, "Radio button 1")
+	ui.NewLabel(panel, "Radio buttons").SetFont("sans-bold")
+	b4 := ui.NewButton(panel, "Radio button 1")
 	b4.SetFlags(ui.RadioButtonType)
-	b5 := ui.NewButton(window, "Radio button 2")
+	b5 := ui.NewButton(panel, "Radio button 2")
 	b5.SetFlags(ui.RadioButtonType)
 
-	ui.NewLabel(window, "A tool palette").SetFont("sans-bold")
-	tools := ui.NewWidget(window)
+	ui.NewLabel(panel, "A tool palette").SetFont("sans-bold")
+	tools := ui.NewWidget(panel)
 	tools.SetLayout(ui.NewBoxLayout(ui.Horizontal, ui.Middle, 0, 6))
 
 	ui.NewToolButton(tools, ui.IconCloud)
@@ -49,8 +49,8 @@ func ButtonDemo(screen *ui.Screen) {
 	ui.NewToolButton(tools, ui.IconCompass)
 	ui.NewToolButton(tools, ui.IconInstall)
 
-	ui.NewLabel(window, "Popup buttons").SetFont("sans-bold")
-	b6 := ui.NewPopupButton(window, "Popup")
+	ui.NewLabel(panel, "Popup buttons").SetFont("sans-bold")
+	b6 := ui.NewPopupButton(panel, "Popup")
 	b6.SetIcon(ui.IconExport)
 	popup := b6.Popup()
 	popup.SetLayout(ui.NewGroupLayout())
@@ -65,14 +65,14 @@ func ButtonDemo(screen *ui.Screen) {
 	ui.NewCheckBox(popup2, "Another check box")
 }
 
-func BasicWidgetsDemo(screen *ui.Screen, images []ui.Image) (*ui.PopupButton, *ui.ImagePanel, *ui.ProgressBar) {
-	window := ui.NewWindow(screen, "Basic widgets")
-	window.SetPosition(230, 15)
-	window.SetLayout(ui.NewGroupLayout())
+func BasicWidgetsDemo(win *ui.Window, images []ui.Image) (*ui.PopupButton, *ui.ImagePanel, *ui.ProgressBar) {
+	panel := ui.NewPanel(win, "Basic widgets")
+	panel.SetPosition(230, 15)
+	panel.SetLayout(ui.NewGroupLayout())
 
-	ui.NewLabel(window, "Message dialog").SetFont("sans-bold")
+	ui.NewLabel(panel, "Message dialog").SetFont("sans-bold")
 
-	tools := ui.NewWidget(window)
+	tools := ui.NewWidget(panel)
 	tools.SetLayout(ui.NewBoxLayout(ui.Horizontal, ui.Middle, 0, 6))
 
 	b1 := ui.NewButton(tools, "Info")
@@ -88,17 +88,17 @@ func BasicWidgetsDemo(screen *ui.Screen, images []ui.Image) (*ui.PopupButton, *u
 
 	})
 
-	ui.NewLabel(window, "Image panel & scroll panel").SetFont("sans-bold")
-	imagePanelButton := ui.NewPopupButton(window, "Image Panel")
+	ui.NewLabel(panel, "Image panel & scroll panel").SetFont("sans-bold")
+	imagePanelButton := ui.NewPopupButton(panel, "Image Panel")
 	imagePanelButton.SetIcon(ui.IconFolder)
 	popup := imagePanelButton.Popup()
 	imgPanel := ui.NewImagePanel(popup)
 	imgPanel.SetImages(images)
 	popup.SetFixedSize(245, 150)
 
-	ui.NewLabel(window, "File dialog").SetFont("sans-bold")
+	ui.NewLabel(panel, "File dialog").SetFont("sans-bold")
 
-	tools2 := ui.NewWidget(window)
+	tools2 := ui.NewWidget(panel)
 	tools2.SetLayout(ui.NewBoxLayout(ui.Horizontal, ui.Middle, 0, 6))
 
 	b4 := ui.NewButton(tools2, "Open")
@@ -110,31 +110,31 @@ func BasicWidgetsDemo(screen *ui.Screen, images []ui.Image) (*ui.PopupButton, *u
 
 	})
 
-	ui.NewLabel(window, "Combo box").SetFont("sans-bold")
-	ui.NewComboBox(window, []string{"Combo box item 1", "Combo box item 2", "Combo box item 3"})
+	ui.NewLabel(panel, "Combo box").SetFont("sans-bold")
+	ui.NewComboBox(panel, []string{"Combo box item 1", "Combo box item 2", "Combo box item 3"})
 
-	ui.NewLabel(window, "Check box").SetFont("sans-bold")
-	cb1 := ui.NewCheckBox(window, "Flag 1")
+	ui.NewLabel(panel, "Check box").SetFont("sans-bold")
+	cb1 := ui.NewCheckBox(panel, "Flag 1")
 	cb1.SetCallback(func(checked bool) {
 		fmt.Println("Check box 1 state:", checked)
 	})
 	cb1.SetChecked(true)
 
-	cb2 := ui.NewCheckBox(window, "Flag 2")
+	cb2 := ui.NewCheckBox(panel, "Flag 2")
 	cb2.SetCallback(func(checked bool) {
 		fmt.Println("Check box 2 state:", checked)
 	})
-	ui.NewLabel(window, "Progress bar").SetFont("sans-bold")
-	progress := ui.NewProgressBar(window)
+	ui.NewLabel(panel, "Progress bar").SetFont("sans-bold")
+	progress := ui.NewProgressBar(panel)
 
-	ui.NewLabel(window, "Slider and text box").SetFont("sans-bold")
-	panel := ui.NewWidget(window)
-	panel.SetLayout(ui.NewBoxLayout(ui.Horizontal, ui.Middle, 0, 20))
-	slider := ui.NewSlider(panel)
+	ui.NewLabel(panel, "Slider and text box").SetFont("sans-bold")
+	p := ui.NewWidget(panel)
+	p.SetLayout(ui.NewBoxLayout(ui.Horizontal, ui.Middle, 0, 20))
+	slider := ui.NewSlider(p)
 	slider.SetValue(0.5)
 	slider.SetFixedWidth(80)
 
-	textBox := ui.NewTextBox(panel)
+	textBox := ui.NewTextBox(p)
 	textBox.SetFixedSize(60, 25)
 	textBox.SetFontSize(20)
 	textBox.SetAlignment(ui.TextRight)
@@ -151,19 +151,19 @@ func BasicWidgetsDemo(screen *ui.Screen, images []ui.Image) (*ui.PopupButton, *u
 	return imagePanelButton, imgPanel, progress
 }
 
-func MiscWidgetsDemo(screen *ui.Screen) {
-	window := ui.NewWindow(screen, "Misc. widgets")
-	window.SetPosition(445, 15)
-	window.SetLayout(ui.NewGroupLayout())
+func MiscWidgetsDemo(win *ui.Window) {
+	panel := ui.NewPanel(win, "Misc. widgets")
+	panel.SetPosition(445, 15)
+	panel.SetLayout(ui.NewGroupLayout())
 
-	ui.NewLabel(window, "Color wheel").SetFont("sans-bold")
-	ui.NewColorWheel(window)
+	ui.NewLabel(panel, "Color wheel").SetFont("sans-bold")
+	ui.NewColorWheel(panel)
 
-	ui.NewLabel(window, "Color picker").SetFont("sans-bold")
-	ui.NewColorPicker(window)
+	ui.NewLabel(panel, "Color picker").SetFont("sans-bold")
+	ui.NewColorPicker(panel)
 
-	ui.NewLabel(window, "Function graph").SetFont("sans-bold")
-	graph := ui.NewGraph(window, "Some function")
+	ui.NewLabel(panel, "Function graph").SetFont("sans-bold")
+	graph := ui.NewGraph(panel, "Some function")
 	graph.SetHeader("E = 2.35e-3")
 	graph.SetFooter("Iteration 89")
 	fValues := make([]float32, 100)
@@ -174,17 +174,17 @@ func MiscWidgetsDemo(screen *ui.Screen) {
 	graph.SetValues(fValues)
 }
 
-func GridDemo(screen *ui.Screen) {
-	window := ui.NewWindow(screen, "Grid of small widgets")
-	window.SetPosition(445, 358)
+func GridDemo(win *ui.Window) {
+	panel := ui.NewPanel(win, "Grid of small widgets")
+	panel.SetPosition(445, 358)
 	layout := ui.NewGridLayout(ui.Horizontal, 2, ui.Middle, 15, 5)
 	layout.SetColAlignment(ui.Maximum, ui.Fill)
 	layout.SetColSpacing(10)
-	window.SetLayout(layout)
+	panel.SetLayout(layout)
 
 	{
-		ui.NewLabel(window, "Regular text :").SetFont("sans-bold")
-		textBox := ui.NewTextBox(window, "日本語")
+		ui.NewLabel(panel, "Regular text :").SetFont("sans-bold")
+		textBox := ui.NewTextBox(panel, "日本語")
 		textBox.SetFont("japanese")
 		textBox.SetEditable(true)
 		textBox.SetFixedSize(100, 20)
@@ -192,8 +192,8 @@ func GridDemo(screen *ui.Screen) {
 		textBox.SetFontSize(16)
 	}
 	{
-		ui.NewLabel(window, "Floating point :").SetFont("sans-bold")
-		textBox := ui.NewTextBox(window, "50.0")
+		ui.NewLabel(panel, "Floating point :").SetFont("sans-bold")
+		textBox := ui.NewTextBox(panel, "50.0")
 		textBox.SetEditable(true)
 		textBox.SetFixedSize(100, 20)
 		textBox.SetUnits("GiB")
@@ -202,8 +202,8 @@ func GridDemo(screen *ui.Screen) {
 		textBox.SetFormat(`^[-]?[0-9]*\.?[0-9]+$`)
 	}
 	{
-		ui.NewLabel(window, "Positive integer :").SetFont("sans-bold")
-		textBox := ui.NewTextBox(window, "50")
+		ui.NewLabel(panel, "Positive integer :").SetFont("sans-bold")
+		textBox := ui.NewTextBox(panel, "50")
 		textBox.SetEditable(true)
 		textBox.SetFixedSize(100, 20)
 		textBox.SetUnits("MHz")
@@ -212,8 +212,8 @@ func GridDemo(screen *ui.Screen) {
 		textBox.SetFormat(`^[1-9][0-9]*$`)
 	}
 	{
-		ui.NewLabel(window, "Float box :").SetFont("sans-bold")
-		floatBox := ui.NewFloatBox(window, 10.0)
+		ui.NewLabel(panel, "Float box :").SetFont("sans-bold")
+		floatBox := ui.NewFloatBox(panel, 10.0)
 		floatBox.SetEditable(true)
 		floatBox.SetFixedSize(100, 20)
 		floatBox.SetUnits("GiB")
@@ -221,8 +221,8 @@ func GridDemo(screen *ui.Screen) {
 		floatBox.SetFontSize(16)
 	}
 	{
-		ui.NewLabel(window, "Int box :").SetFont("sans-bold")
-		intBox := ui.NewIntBox(window, true, 50)
+		ui.NewLabel(panel, "Int box :").SetFont("sans-bold")
+		intBox := ui.NewIntBox(panel, true, 50)
 		intBox.SetEditable(true)
 		intBox.SetFixedSize(100, 20)
 		intBox.SetUnits("MHz")
@@ -230,21 +230,21 @@ func GridDemo(screen *ui.Screen) {
 		intBox.SetFontSize(16)
 	}
 	{
-		ui.NewLabel(window, "Checkbox :").SetFont("sans-bold")
-		checkbox := ui.NewCheckBox(window, "Check me")
+		ui.NewLabel(panel, "Checkbox :").SetFont("sans-bold")
+		checkbox := ui.NewCheckBox(panel, "Check me")
 		checkbox.SetFontSize(16)
 		checkbox.SetChecked(true)
 	}
 	{
-		ui.NewLabel(window, "Combobox :").SetFont("sans-bold")
-		combobox := ui.NewComboBox(window, []string{"Item 1", "Item 2", "Item 3"})
+		ui.NewLabel(panel, "Combobox :").SetFont("sans-bold")
+		combobox := ui.NewComboBox(panel, []string{"Item 1", "Item 2", "Item 3"})
 		combobox.SetFontSize(16)
 		combobox.SetFixedSize(100, 20)
 	}
 	{
-		ui.NewLabel(window, "Color button :").SetFont("sans-bold")
+		ui.NewLabel(panel, "Color button :").SetFont("sans-bold")
 
-		popupButton := ui.NewPopupButton(window, "")
+		popupButton := ui.NewPopupButton(panel, "")
 		popupButton.SetBackgroundColor(vg.RGBA(255, 120, 0, 255))
 		popupButton.SetFontSize(16)
 		popupButton.SetFixedSize(100, 20)
@@ -271,21 +271,23 @@ func GridDemo(screen *ui.Screen) {
 	}
 }
 
-func SelectedImageDemo(screen *ui.Screen, imageButton *ui.PopupButton, imagePanel *ui.ImagePanel) {
-	window := ui.NewWindow(screen, "Selected image")
-	window.SetPosition(685, 15)
-	window.SetLayout(ui.NewGroupLayout())
+func SelectedImageDemo(win *ui.Window, imageButton *ui.PopupButton, imagePanel *ui.ImagePanel) {
+	panel := ui.NewPanel(win, "Selected image")
+	panel.SetPosition(685, 15)
+	panel.SetLayout(ui.NewGroupLayout())
 
-	img := ui.NewImageView(window)
+	img := ui.NewImageView(panel)
 	img.SetPolicy(ui.ImageSizePolicyExpand)
 	img.SetFixedSize(300, 300)
-	img.SetImage(imagePanel.Images()[0].ImageID)
+    if len(imagePanel.Images()) > 0 {
+	    img.SetImage(imagePanel.Images()[0].ImageID)
+    }
 
 	imagePanel.SetCallback(func(index int) {
 		img.SetImage(imagePanel.Images()[index].ImageID)
 	})
 
-	cb := ui.NewCheckBox(window, "Expand")
+	cb := ui.NewCheckBox(panel, "Expand")
 	cb.SetCallback(func(checked bool) {
 		if checked {
 			img.SetPolicy(ui.ImageSizePolicyExpand)

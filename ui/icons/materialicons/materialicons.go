@@ -218,7 +218,7 @@ const (
 	IconDelete                                ui.Icon = 0xe872
 	IconDescription                           ui.Icon = 0xe873
 	IconDesktopMac                            ui.Icon = 0xe30b
-	IconDesktopWindows                        ui.Icon = 0xe30c
+	IconDesktopPanels                        ui.Icon = 0xe30c
 	IconDetails                               ui.Icon = 0xe3c8
 	IconDeveloperBoard                        ui.Icon = 0xe30d
 	IconDeveloperMode                         ui.Icon = 0xe1b0
@@ -441,7 +441,7 @@ const (
 	IconLaptop                                ui.Icon = 0xe31e
 	IconLaptopChromebook                      ui.Icon = 0xe31f
 	IconLaptopMac                             ui.Icon = 0xe320
-	IconLaptopWindows                         ui.Icon = 0xe321
+	IconLaptopPanels                         ui.Icon = 0xe321
 	IconLaunch                                ui.Icon = 0xe895
 	IconLayers                                ui.Icon = 0xe53b
 	IconLayersClear                           ui.Icon = 0xe53c

@@ -138,11 +138,11 @@ func (b *BoxLayout) OnPerformLayout(widget Widget, ctx *vg.Context) {
 
 	var yOffset int
 
-	if _, ok := widget.(*Window); ok {
+	if _, ok := widget.(*Panel); ok {
 		if b.orientation == Vertical {
-			position += widget.Theme().WindowHeaderHeight - b.margin/2
+			position += widget.Theme().PanelHeaderHeight - b.margin/2
 		} else {
-			yOffset = widget.Theme().WindowHeaderHeight
+			yOffset = widget.Theme().PanelHeaderHeight
 		}
 	}
 	first := true
@@ -192,11 +192,11 @@ func (b *BoxLayout) PreferredSize(widget Widget, ctx *vg.Context) (int, int) {
 	size := []int{2 * b.margin, 2 * b.margin}
 
 	axis2Offset := 0
-	if _, ok := widget.(*Window); ok {
+	if _, ok := widget.(*Panel); ok {
 		if b.orientation == Vertical {
-			size[1] += widget.Theme().WindowHeaderHeight - b.margin/2
+			size[1] += widget.Theme().PanelHeaderHeight - b.margin/2
 		} else {
-			axis2Offset = widget.Theme().WindowHeaderHeight
+			axis2Offset = widget.Theme().PanelHeaderHeight
 		}
 	}
 
@@ -326,9 +326,9 @@ func (g *GroupLayout) OnPerformLayout(widget Widget, ctx *vg.Context) {
 	height := g.margin
 	availableWidth := -g.margin * 2
 	availableWidth += toI(widget.FixedWidth() > 0, widget.FixedWidth(), widget.Width())
-	window, ok := widget.(*Window)
-	if ok && window.Title() != "" {
-		height += widget.Theme().WindowHeaderHeight - g.margin/2
+	panel, ok := widget.(*Panel)
+	if ok && panel.Title() != "" {
+		height += widget.Theme().PanelHeaderHeight - g.margin/2
 	}
 	first := true
 	indent := false
@@ -368,9 +368,9 @@ func (g *GroupLayout) PreferredSize(widget Widget, ctx *vg.Context) (int, int) {
 	height := g.margin
 	width := g.margin * 2
 
-	window, ok := widget.(*Window)
-	if ok && window.Title() != "" {
-		height += widget.Theme().WindowHeaderHeight - g.margin/2
+	panel, ok := widget.(*Panel)
+	if ok && panel.Title() != "" {
+		height += widget.Theme().PanelHeaderHeight - g.margin/2
 	}
 	first := true
 	indent := false
@@ -537,8 +537,8 @@ func (g *GridLayout) OnPerformLayout(widget Widget, ctx *vg.Context) {
 	dim := []int{len(grid[0]), len(grid[1])}
 
 	extra := []int{0, 0}
-	if _, ok := widget.(*Window); ok {
-		extra[1] = widget.Theme().WindowHeaderHeight - g.margin/2
+	if _, ok := widget.(*Panel); ok {
+		extra[1] = widget.Theme().PanelHeaderHeight - g.margin/2
 	}
 
 	/* Stretch to size provided by widget */
@@ -630,8 +630,8 @@ func (g *GridLayout) PreferredSize(widget Widget, ctx *vg.Context) (int, int) {
 	for _, v := range grid[1] {
 		h += v
 	}
-	if _, ok := widget.(*Window); ok {
-		h += widget.Theme().WindowHeaderHeight - g.margin/2
+	if _, ok := widget.(*Panel); ok {
+		h += widget.Theme().PanelHeaderHeight - g.margin/2
 	}
 	return w, h
 }
@@ -831,8 +831,8 @@ func (a *AdvancedGridLayout) Anchor(widget Widget) Anchor {
 func (a *AdvancedGridLayout) OnPerformLayout(widget Widget, ctx *vg.Context) {
 	grid := a.computeLayout(widget, ctx)
 	grid[0] = append([]int{a.margin}, grid[0]...)
-	if _, ok := widget.(*Window); ok {
-		grid[1] = append([]int{widget.Theme().WindowHeaderHeight + a.margin/2}, grid[1]...)
+	if _, ok := widget.(*Panel); ok {
+		grid[1] = append([]int{widget.Theme().PanelHeaderHeight + a.margin/2}, grid[1]...)
 	} else {
 		grid[1] = append([]int{a.margin}, grid[1]...)
 	}
@@ -894,8 +894,8 @@ func (a *AdvancedGridLayout) PreferredSize(widget Widget, ctx *vg.Context) (int,
 	for _, size := range grid[1] {
 		sizeH += size
 	}
-	if _, ok := widget.(*Window); ok {
-		sizeH += widget.Theme().WindowHeaderHeight - a.margin/2
+	if _, ok := widget.(*Panel); ok {
+		sizeH += widget.Theme().PanelHeaderHeight - a.margin/2
 	}
 	return sizeW, sizeH
 }
@@ -909,8 +909,8 @@ func (a *AdvancedGridLayout) computeLayout(widget Widget, ctx *vg.Context) [][]i
 	extraX := 2 * a.margin
 	extraY := 2 * a.margin
 
-	if _, ok := widget.(*Window); ok {
-		extraY += widget.Theme().WindowHeaderHeight - a.margin/2
+	if _, ok := widget.(*Panel); ok {
+		extraY += widget.Theme().PanelHeaderHeight - a.margin/2
 	}
 
 	containerW -= extraX

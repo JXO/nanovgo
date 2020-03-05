@@ -37,8 +37,8 @@ func NewPopupButton(parent Widget, captions ...string) *PopupButton {
 	button.SetIconPosition(ButtonIconLeftCentered)
 	button.SetFlags(ToggleButtonType | PopupButtonType)
 
-	parentWindow := parent.FindWindow()
-	button.popup = NewPopup(parentWindow.Parent(), parentWindow)
+	parentPanel := parent.FindPanel()
+	button.popup = NewPopup(parentPanel.Parent(), parentPanel)
 	button.popup.SetSize(320, 250)
 
 	InitWidget(button, parent)
@@ -88,10 +88,10 @@ func (p *PopupButton) PreferredSize(self Widget, ctx *vg.Context) (int, int) {
 
 func (p *PopupButton) OnPerformLayout(self Widget, ctx *vg.Context) {
 	p.Button.WidgetImplement.OnPerformLayout(self, ctx)
-	parentWindow := self.FindWindow()
-	x := parentWindow.Width() + 15
+	parentPanel := self.FindPanel()
+	x := parentPanel.Width() + 15
 	_, ay := p.AbsolutePosition()
-	_, py := parentWindow.Position()
+	_, py := parentPanel.Position()
 	y := ay - py + p.Height()/2
 	p.popup.SetAnchorPosition(x, y)
 }

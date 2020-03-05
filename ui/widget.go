@@ -54,7 +54,7 @@ type Widget interface {
 	RemoveChildByIndex(i int)
 	RemoveChild(w Widget)
 
-	FindWindow() IWindow
+	FindPanel() IPanel
 
 	SetID(id string)
 	ID() string
@@ -101,6 +101,7 @@ type Widget interface {
 
 type WidgetImplement struct {
 	parent                     Widget
+    self                       Widget
 	layout                     Layout
 	theme                      *Theme
 	x, y, w, h, fixedW, fixedH int
@@ -116,6 +117,7 @@ type WidgetImplement struct {
 
 func NewWidget(parent Widget) Widget {
 	widget := &WidgetImplement{}
+    widget.self = widget
 	InitWidget(widget, parent)
 	return widget
 }
@@ -323,13 +325,13 @@ func (wg *WidgetImplement) RemoveChild(w Widget) {
 	}
 }
 
-// FindWindow() walks up the hierarchy and return the parent window
-func (w *WidgetImplement) FindWindow() IWindow {
+// FindPanel() walks up the hierarchy and return the parent panel
+func (w *WidgetImplement) FindPanel() IPanel {
 	parent := w.Parent()
 	if parent == nil {
-		panic("Widget:internal error (could not find parent window)")
+		panic("Widget:internal error (could not find parent panel)")
 	}
-	return parent.FindWindow()
+	return parent.FindPanel()
 }
 
 // SetID() associates this widget with an ID value (optional)
@@ -370,8 +372,8 @@ func (w *WidgetImplement) RequestFocus(self Widget) {
 		widget = parent
 		parent = widget.Parent()
 	}
-	screen := widget.(*Screen)
-	screen.UpdateFocus(self)
+	win := widget.(*Window)
+	win.UpdateFocus(self)
 }
 
 // Tooltip() returns tooltip string
@@ -421,22 +423,22 @@ func childrenReverseDepthOrder(self Widget) []Widget {
 	children := self.Children()
 
 	widgets := make([]Widget, 0, len(children))
-	var windows widgetsAsc = make([]Widget, 0, len(children))
+	var panels widgetsAsc = make([]Widget, 0, len(children))
 
 	for _, child := range children {
 		if child.Visible() {
 			if child.Depth() == 0 {
 				widgets = append(widgets, child)
 			} else {
-				windows = append(windows, child)
+				panels = append(panels, child)
 			}
 		}
 	}
-	sort.Sort(sort.Reverse(windows))
+	sort.Sort(sort.Reverse(panels))
 	for i := len(widgets) - 1; i > -1; i-- {
-		windows = append(windows, widgets[i])
+		panels = append(panels, widgets[i])
 	}
-	return windows
+	return panels
 }
 
 // FindWidget() determines the widget located at the given position value (recursive)
@@ -564,6 +566,7 @@ func (w *WidgetImplement) Draw(self Widget, ctx *vg.Context) {
 	if len(w.children) == 0 {
 		return
 	}
+
 	ctx.Translate(float32(w.x), float32(w.y))
 	// draw depth 0 items
 	var drawLater widgetsAsc = make([]Widget, 0, len(w.children))

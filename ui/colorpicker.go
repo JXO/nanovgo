@@ -30,9 +30,9 @@ func NewColorPicker(parent Widget, colors ...vg.Color) *ColorPicker {
 	colorPicker.chevronIcon = IconRightOpen
 	colorPicker.SetIconPosition(ButtonIconLeftCentered)
 	colorPicker.SetFlags(ToggleButtonType | PopupButtonType)
-	parentWindow := parent.FindWindow()
+	parentPanel := parent.FindPanel()
 
-	colorPicker.popup = NewPopup(parentWindow.Parent(), parentWindow)
+	colorPicker.popup = NewPopup(parentPanel.Parent(), parentPanel)
 	colorPicker.popup.panel.SetLayout(NewGroupLayout())
 
 	colorPicker.colorWheel = NewColorWheel(colorPicker.popup.panel)

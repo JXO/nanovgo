@@ -95,11 +95,11 @@ func (b *ExpandBoxLayout) OnPerformLayout(widget Widget, ctx *vg.Context) {
 
 	var yOffset int
 
-	if _, ok := widget.(*Window); ok {
+	if _, ok := widget.(*Panel); ok {
 		if b.orientation == Vertical {
-			position += widget.Theme().WindowHeaderHeight - b.margin/2
+			position += widget.Theme().PanelHeaderHeight - b.margin/2
 		} else {
-			yOffset = widget.Theme().WindowHeaderHeight
+			yOffset = widget.Theme().PanelHeaderHeight
 		}
 	}
 	childCount := 0
@@ -325,9 +325,9 @@ func (g *ExpandListLayout) OnPerformLayout(widget Widget, ctx *vg.Context) {
 
 	xOffset := g.margin
 	yOffset := g.margin
-	window, ok := widget.(*Window)
-	if ok && window.Title() != "" {
-		yOffset += widget.Theme().WindowHeaderHeight - g.margin/2
+	panel, ok := widget.(*Panel)
+	if ok && panel.Title() != "" {
+		yOffset += widget.Theme().PanelHeaderHeight - g.margin/2
 	}
 
 	row := 0
@@ -402,9 +402,9 @@ func (g *ExpandListLayout) computeSize(widget Widget, ctx *vg.Context) (widths, 
 		widths[i] = columnWidth + int(float32(remainedWidth)*stretches[i]/totalStretch)
 	}
 	totalHeight = 2*g.margin + (nRows-1)*g.spacing[1]
-	window, ok := widget.(*Window)
-	if ok && window.Title() != "" {
-		totalHeight += widget.Theme().WindowHeaderHeight - g.margin/2
+	panel, ok := widget.(*Panel)
+	if ok && panel.Title() != "" {
+		totalHeight += widget.Theme().PanelHeaderHeight - g.margin/2
 	}
 	maxRowHeight := 0
 	heights = make([]int, nRows)

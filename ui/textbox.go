@@ -491,14 +491,14 @@ func (t *TextBox) Draw(self Widget, ctx *vg.Context) {
 				offsetIndex = nextOffsetIndex
 				offsetX = nextOffsetX
 			}
-			screen := t.FindWindow().Parent().(*Screen)
-			oldCurX, oldCurY, oldCurH := screen.PreeditCursorPos()
+			win := t.FindPanel().Parent().(*Window)
+			oldCurX, oldCurY, oldCurH := win.PreeditCursorPos()
 			absX, absY := t.Parent().AbsolutePosition()
 			newCurX := int(caretX) + absX
 			newCurY := int(drawPosY+lineH*0.5) + absY
 			newCurH := int(lineH)
 			if oldCurX != newCurX || oldCurY != newCurY || oldCurH != newCurH {
-				screen.SetPreeditCursorPos(newCurX, newCurY, newCurH)
+				win.SetPreeditCursorPos(newCurX, newCurY, newCurH)
 			}
 		} else if t.cursorPos > -1 {
 			// regular cursor and selection area
@@ -540,7 +540,7 @@ func (t *TextBox) checkFormat(input string) bool {
 }
 
 func (t *TextBox) CopySelection() bool {
-	sc := t.FindWindow().Parent().(*Screen)
+	win := t.FindPanel().Parent().(*Window)
 	if t.selectionPos > -1 {
 		begin := t.cursorPos
 		end := t.selectionPos
@@ -548,14 +548,14 @@ func (t *TextBox) CopySelection() bool {
 		if begin > end {
 			begin, end = end, begin
 		}
-		sc.GLFWWindow().SetClipboardString(string(t.valueTemp[begin:end]))
+		win.GLFWWindow().SetClipboardString(string(t.valueTemp[begin:end]))
 	}
 	return false
 }
 
 func (t *TextBox) PasteFromClipboard() {
-	sc := t.FindWindow().Parent().(*Screen)
-	str, _ := sc.GLFWWindow().GetClipboardString()
+	win := t.FindPanel().Parent().(*Window)
+	str, _ := win.GLFWWindow().GetClipboardString()
 	runes := []rune(str)
 	t.valueTemp = append(t.valueTemp[:t.cursorPos], append(runes, t.valueTemp[t.cursorPos:]...)...)
 	t.cursorPos += len(runes)

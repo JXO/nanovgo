@@ -6,8 +6,8 @@ import (
 )
 
 type Popup struct {
-	Window
-	parentWindow IWindow
+	Panel
+	parentPanel IPanel
 	anchorX      int
 	anchorY      int
 	anchorHeight int
@@ -15,9 +15,9 @@ type Popup struct {
 	panel        Widget
 }
 
-func NewPopup(parent Widget, parentWindow IWindow) *Popup {
+func NewPopup(parent Widget, parentPanel IPanel) *Popup {
 	popup := &Popup{
-		parentWindow: parentWindow,
+		parentPanel: parentPanel,
 		anchorHeight: 30,
 	}
 	InitWidget(popup, parent)
@@ -26,13 +26,13 @@ func NewPopup(parent Widget, parentWindow IWindow) *Popup {
 	return popup
 }
 
-// SetAnchorPosition() sets the anchor position in the parent window; the placement of the popup is relative to it
+// SetAnchorPosition() sets the anchor position in the parent panel; the placement of the popup is relative to it
 func (p *Popup) SetAnchorPosition(x, y int) {
 	p.anchorX = x
 	p.anchorY = y
 }
 
-// AnchorPosition() returns the anchor position in the parent window; the placement of the popup is relative to it
+// AnchorPosition() returns the anchor position in the parent panel; the placement of the popup is relative to it
 func (p *Popup) AnchorPosition() (int, int) {
 	return p.anchorX, p.anchorY
 }
@@ -47,14 +47,14 @@ func (p *Popup) AnchorHeight() int {
 	return p.anchorHeight
 }
 
-// SetParentWindow() sets the parent window of the popup
-func (p *Popup) SetParentWindow(w *Window) {
-	p.parentWindow = w
+// SetParentPanel() sets the parent panel of the popup
+func (p *Popup) SetParentPanel(w *Panel) {
+	p.parentPanel = w
 }
 
-// ParentWindow() returns the parent window of the popup
-func (p *Popup) ParentWindow() IWindow {
-	return p.parentWindow
+// ParentPanel() returns the parent panel of the popup
+func (p *Popup) ParentPanel() IPanel {
+	return p.parentPanel
 }
 
 func (p *Popup) OnPerformLayout(self Widget, ctx *vg.Context) {
@@ -77,8 +77,8 @@ func (p *Popup) Draw(self Widget, ctx *vg.Context) {
 	if !p.visible {
 		return
 	}
-	ds := float32(p.theme.WindowDropShadowSize)
-	cr := float32(p.theme.WindowCornerRadius)
+	ds := float32(p.theme.PanelDropShadowSize)
+	cr := float32(p.theme.PanelCornerRadius)
 
 	px := float32(p.x)
 	py := float32(p.y)
@@ -95,7 +95,7 @@ func (p *Popup) Draw(self Widget, ctx *vg.Context) {
 	ctx.SetFillPaint(shadowPaint)
 	ctx.Fill()
 
-	/* Draw window */
+	/* Draw panel */
 	ctx.BeginPath()
 	ctx.RoundedRect(px, py, pw, ph, cr)
 
@@ -103,23 +103,23 @@ func (p *Popup) Draw(self Widget, ctx *vg.Context) {
 	ctx.LineTo(px+1, py+ah-15)
 	ctx.LineTo(px+1, py+ah+15)
 
-	ctx.SetFillColor(p.theme.WindowPopup)
+	ctx.SetFillColor(p.theme.PanelPopup)
 
 	ctx.Fill()
 
 	p.WidgetImplement.Draw(self, ctx)
 }
 
-// RefreshRelativePlacement is internal helper function to maintain nested window position values; overridden in \ref Popup
+// RefreshRelativePlacement is internal helper function to maintain nested panel position values; overridden in \ref Popup
 func (p *Popup) RefreshRelativePlacement() {
-	p.parentWindow.RefreshRelativePlacement()
-	p.visible = p.visible && p.parentWindow.VisibleRecursive()
-	x, y := p.parentWindow.Position()
+	p.parentPanel.RefreshRelativePlacement()
+	p.visible = p.visible && p.parentPanel.VisibleRecursive()
+	x, y := p.parentPanel.Position()
 	p.x = x + p.anchorX
 	p.y = y + p.anchorY - p.anchorHeight
 }
 
-func (p *Popup) FindWindow() IWindow {
+func (p *Popup) FindPanel() IPanel {
 	return p
 }
 

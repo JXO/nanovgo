@@ -42,7 +42,7 @@ type NodeTheme struct {
 
 // describes the theme used to draw widgets
 type Theme struct {
-    // the background color of panels and windows
+    // the background color of panels and panels
     BackgroundColor vg.Color
     // alpha of disabled widget groups
     // can be used in conjunction with vg.GlobalAlpha()

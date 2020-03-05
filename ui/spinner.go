@@ -34,9 +34,9 @@ func NewSpinner(parent Widget) *Spinner {
 	InitWidget(spinner, parent)
 	spinner.SetVisible(false)
 
-	screen, ok := parent.(*Screen)
+	win, ok := parent.(*Window)
 	if !ok {
-		screen = parent.FindWindow().Parent().(*Screen)
+		win = parent.FindPanel().Parent().(*Window)
 	}
 
 	filter := &SpinnerFilter{
@@ -47,7 +47,7 @@ func NewSpinner(parent Widget) *Spinner {
 		speed:     1,
 		lineWidth: 3.0,
 	}
-	InitWidget(filter, screen)
+	InitWidget(filter, win)
 	spinner.filter = filter
 	filter.SetVisible(false)
 	runtime.SetFinalizer(spinner, finalizeSpinner)
@@ -147,8 +147,8 @@ func (sf *SpinnerFilter) IsPositionAbsolute() bool {
 func (sf *SpinnerFilter) PreferredSize(self Widget, ctx *vg.Context) (int, int) {
 	if sf.isActive() {
 		fw, fh := sf.Parent().Size()
-		if window, ok := sf.Parent().(*Window); ok {
-			hh := window.Theme().WindowHeaderHeight
+		if panel, ok := sf.Parent().(*Panel); ok {
+			hh := panel.Theme().PanelHeaderHeight
 			fh -= hh
 		}
 		return fw, fh
@@ -161,8 +161,8 @@ func (sf *SpinnerFilter) Draw(self Widget, ctx *vg.Context) {
 	if sf.isActive() {
 		var py int
 		fw, fh := sf.Parent().Size()
-		if window, ok := sf.Parent().(*Window); ok {
-			hh := window.Theme().WindowHeaderHeight
+		if panel, ok := sf.Parent().(*Panel); ok {
+			hh := panel.Theme().PanelHeaderHeight
 			py += hh
 			fh -= hh
 		}

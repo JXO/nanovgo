@@ -112,7 +112,7 @@ const (
 	IconResizeSmall        Icon = 0xe746
 	IconPopup              Icon = 0xe74c
 	IconPublish            Icon = 0xe74d
-	IconWindow             Icon = 0xe74e
+	IconPanel             Icon = 0xe74e
 	IconArrowCombo         Icon = 0xe74f
 	IconDownCircled        Icon = 0xe758
 	IconLeftCircled        Icon = 0xe759

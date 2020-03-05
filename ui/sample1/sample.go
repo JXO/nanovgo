@@ -4,8 +4,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/goxjs/glfw"
 	"github.com/jxo/davinci/ui"
+    "github.com/jxo/davinci/gfx"
 	"github.com/jxo/davinci/ui/sample1/demo"
 	"github.com/jxo/davinci/vg"
 	"io/ioutil"
@@ -13,50 +13,43 @@ import (
 	"path"
 )
 
-type Application struct {
-	screen   *ui.Screen
-	progress *ui.ProgressBar
-	shader   *ui.GLShader
-}
+func run() {
+    var app *ui.App
 
-func (a *Application) init() {
-	glfw.WindowHint(glfw.Samples, 4)
-	a.screen = ui.NewScreen(1024, 768, "DavinciUI Test", true, false)
+    gfx.Do(func() {
+        app = ui.NewApp("DavinciUI Test")
+        w := app.NewWindow(1024, 768, "", true, false)
 
-	a.screen.NVGContext().CreateFont("japanese", "font/GenShinGothic-P-Regular.ttf")
+        var images []ui.Image
+        w.SetResizeEventCallback(func(x, y int) bool {
+            w.OnPaint()
+            return true
+        })
 
-	demo.ButtonDemo(a.screen)
-	images := loadImageDirectory(a.screen.NVGContext(), "icons")
-	imageButton, imagePanel, progressBar := demo.BasicWidgetsDemo(a.screen, images)
-	a.progress = progressBar
-	demo.SelectedImageDemo(a.screen, imageButton, imagePanel)
-	demo.MiscWidgetsDemo(a.screen)
-	demo.GridDemo(a.screen)
+        w.SetOnLoad(func() {
+            w.NVGContext().CreateFont("japanese", "font/GenShinGothic-P-Regular.ttf")
+            images = loadImageDirectory(w.NVGContext(), "icons")
+            demo.ButtonDemo(w)
+            imageButton, imagePanel, progressBar := demo.BasicWidgetsDemo(w, images)
+            progress := progressBar
+            demo.SelectedImageDemo(w, imageButton, imagePanel)
+            demo.MiscWidgetsDemo(w)
+            demo.GridDemo(w)
 
-	a.screen.SetDrawContentsCallback(func() {
-		a.progress.SetValue(float32(math.Mod(float64(ui.GetTime())/10, 1.0)))
-	})
+            w.SetDrawContentsCallback(func() {
+                progress.SetValue(float32(math.Mod(float64(ui.GetTime())/10, 1.0)))
+            })
 
-	a.screen.PerformLayout()
-	a.screen.DebugPrint()
+            w.PerformLayout()
+	        w.DebugPrint()
+        })
+    })
 
-	/* All NanoGUI widgets are initialized at this point. Now
-	create an OpenGL shader to draw the main window contents.
-
-	NanoGUI comes with a simple Eigen-based wrapper around OpenGL 3,
-	which eliminates most of the tedious and error-prone shader and
-	buffer object management.
-	*/
+    gfx.Do(app.Run)
 }
 
 func main() {
-	ui.Init()
-	//ui.SetDebug(true)
-	app := Application{}
-	app.init()
-	app.screen.DrawAll()
-	app.screen.SetVisible(true)
-	ui.MainLoop()
+    gfx.Main(run)
 }
 
 func loadImageDirectory(ctx *vg.Context, dir string) []ui.Image {
